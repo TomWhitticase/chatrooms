@@ -6,7 +6,6 @@ export const chatroomRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.chatroom.findMany();
   }),
-
   create: protectedProcedure
     .input(z.object({ name: z.string(), description: z.string() }))
     .mutation(({ ctx, input }) => {
@@ -18,8 +17,6 @@ export const chatroomRouter = createTRPCRouter({
         },
       });
     }),
-
-  //delete chatroom
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
