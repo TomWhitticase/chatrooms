@@ -27,6 +27,7 @@ const Messages: React.FC = () => {
       {
         enabled: sessionData?.user !== undefined,
         staleTime: 1000,
+        refetchInterval: 1000,
       }
     );
 
