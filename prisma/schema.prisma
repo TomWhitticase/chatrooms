@@ -78,6 +78,6 @@ model Message {
   senderId     String
   sentAt       DateTime @default(now())
   chatroomId   String
-  chatroom     Chatroom @relation("ChatroomMessages", fields: [chatroomId], references: [id])
-  sender       User     @relation("UserMessages", fields: [senderId], references: [id])
+  chatroom     Chatroom @relation("ChatroomMessages", fields: [chatroomId], references: [id], onDelete: Cascade)
+  sender       User     @relation("UserMessages", fields: [senderId], references: [id], onDelete: Cascade)
 }
