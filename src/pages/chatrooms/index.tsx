@@ -81,7 +81,6 @@ const Chatrooms: React.FC = () => {
               >
                 <h2 className="text-2xl">{chatroom.name}</h2>
               </button>
-              <p>{chatroom.description}</p>
             </div>
             <button
               className="btn"
