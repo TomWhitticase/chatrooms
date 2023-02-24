@@ -55,7 +55,7 @@ const Messages: React.FC = () => {
           //clear inputs
           setMessageInput("");
 
-          createMessage.mutate({
+          void createMessage.mutate({
             chatroomId: chatroomId?.toString() ?? "",
             content: messageInput,
           });
@@ -101,7 +101,7 @@ const Messages: React.FC = () => {
                 <button
                   className="btn"
                   onClick={() => {
-                    deleteMessage.mutate(
+                    void deleteMessage.mutate(
                       { id: message.id },
                       {
                         onSuccess: () => {

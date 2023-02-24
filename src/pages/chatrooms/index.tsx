@@ -51,7 +51,7 @@ const Chatrooms: React.FC = () => {
           setNameInput("");
           setDescriptionInput("");
 
-          createChatroom.mutate({
+          void createChatroom.mutate({
             name: nameInput,
             description: descriptionInput,
           });
@@ -96,7 +96,7 @@ const Chatrooms: React.FC = () => {
             <button
               className="btn"
               onClick={() => {
-                deleteChatroom.mutate(
+                void deleteChatroom.mutate(
                   { id: chatroom.id },
                   {
                     onSuccess: () => {
