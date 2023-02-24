@@ -65,7 +65,6 @@ model VerificationToken {
 model Chatroom {
   id           String    @id @default(cuid())
   name         String
-  description  String?
   creatorId    String
   createdAt    DateTime  @default(now())
 //   members      User[]    @relation("ChatroomMembers")

@@ -18,7 +18,6 @@ const Chatrooms: React.FC = () => {
   const { data: sessionData } = useSession();
 
   const [nameInput, setNameInput] = React.useState("");
-  const [descriptionInput, setDescriptionInput] = React.useState("");
 
   const { data: chatrooms, refetch: refetchChatrooms } =
     api.chatroom.getAll.useQuery(undefined, {
@@ -49,11 +48,9 @@ const Chatrooms: React.FC = () => {
 
           //clear inputs
           setNameInput("");
-          setDescriptionInput("");
 
           void createChatroom.mutate({
             name: nameInput,
-            description: descriptionInput,
           });
         }}
       >
@@ -63,13 +60,6 @@ const Chatrooms: React.FC = () => {
           placeholder="Name"
           value={nameInput}
           onChange={(e) => setNameInput(e.target.value)}
-        />
-        <input
-          type="text"
-          className="input-bordered input"
-          placeholder="Description"
-          value={descriptionInput}
-          onChange={(e) => setDescriptionInput(e.target.value)}
         />
         <button className="btn" type="submit">
           Create

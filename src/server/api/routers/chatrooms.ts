@@ -7,12 +7,11 @@ export const chatroomRouter = createTRPCRouter({
     return ctx.prisma.chatroom.findMany();
   }),
   create: protectedProcedure
-    .input(z.object({ name: z.string(), description: z.string() }))
+    .input(z.object({ name: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.chatroom.create({
         data: {
           name: input.name,
-          description: input.description,
           creatorId: ctx.session.user.id,
         },
       });
