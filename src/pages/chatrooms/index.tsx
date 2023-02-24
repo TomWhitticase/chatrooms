@@ -5,8 +5,6 @@ import React from "react";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const { data: sessionData } = useSession();
-
   return (
     <div>
       <Chatrooms />
