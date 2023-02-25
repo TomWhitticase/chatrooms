@@ -1,5 +1,4 @@
 import { type NextPage } from "next";
-import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";

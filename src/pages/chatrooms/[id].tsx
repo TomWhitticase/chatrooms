@@ -43,7 +43,7 @@ const Messages: React.FC = () => {
   });
   const deleteMessage = api.message.delete.useMutation({
     onSuccess: () => {
-      socket.emit("update-messages", "yay!");
+      void socket.emit("update-messages", "yay!");
     },
   });
 
@@ -96,23 +96,23 @@ const Messages: React.FC = () => {
   if (status === "unauthenticated") {
     return <p>You must be logged in</p>;
   }
-  const handleDeleteMessage = (id: string) => {
-    void deleteMessage.mutate(
-      { id: id },
-      {
-        onSuccess: () => {
-          void refetchMessages();
-        },
-      }
-    );
-  };
+  // const handleDeleteMessage = (id: string) => {
+  //   void deleteMessage.mutate(
+  //     { id: id },
+  //     {
+  //       onSuccess: () => {
+  //         void refetchMessages();
+  //       },
+  //     }
+  //   );
+  // };
   return (
     <>
       <div className="p-4">
         <div className="flex w-full justify-between">
           <button
             onClick={() => {
-              router.push("/chatrooms");
+              void router.push("/chatrooms");
             }}
             className="p-4"
           >
@@ -141,8 +141,9 @@ const Messages: React.FC = () => {
           <div className="flex h-96 items-end justify-center border-b-2 border-b-slate-500">
             Start of chat
           </div>
-          {messages?.map((message) => (
+          {messages?.map((message, i) => (
             <div
+              key={i}
               className={`flex w-full ${
                 message.senderId === sessionData?.user.id
                   ? "flex-row-reverse"
