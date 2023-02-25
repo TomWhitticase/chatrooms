@@ -16,6 +16,7 @@ const SocketHandler = (req: NextApiRequest, res: any) => {
           socket.broadcast.emit("update-messages", msg);
         });
         socket.on("user-typing", (msg) => {
+          console.log("user is typing");
           socket.broadcast.emit("user-typing", msg);
         });
       });
