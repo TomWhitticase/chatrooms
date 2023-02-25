@@ -4,8 +4,9 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { api } from "~/utils/api";
-import { io, Socket } from "socket.io-client";
-let socket: any;
+import { io } from "socket.io-client";
+import type { Socket } from "socket.io-client";
+let socket: Socket;
 
 const Chatroom: NextPage = () => {
   return (
@@ -45,14 +46,6 @@ const Messages: React.FC = () => {
     },
   });
 
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
-
-  if (status === "unauthenticated") {
-    return <p>You must be logged in</p>;
-  }
-
   //is typing idicator
   const [isTypingText, setIsTypingText] = useState("");
 
@@ -77,11 +70,11 @@ const Messages: React.FC = () => {
       console.log("connected");
     });
 
-    socket.on("update-messages", (msg: any) => {
-      refetchMessages();
+    socket.on("update-messages", () => {
+      void refetchMessages();
       console.log("socket message recieved");
     });
-    socket.on("user-typing", (msg: any) => {
+    socket.on("user-typing", (msg: string) => {
       setIsTypingText(msg);
     });
   };
@@ -95,6 +88,13 @@ const Messages: React.FC = () => {
     }
   }, [messages]);
 
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (status === "unauthenticated") {
+    return <p>You must be logged in</p>;
+  }
   return (
     <div>
       <div>
@@ -168,10 +168,10 @@ const Messages: React.FC = () => {
           placeholder="Type your message here..."
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
-          onKeyDown={(e) => {
+          onKeyDown={() => {
             socket.emit(
               "user-typing",
-              sessionData?.user.name + " is typing..."
+              `${sessionData?.user.name || ""} is typing...`
             );
           }}
         />

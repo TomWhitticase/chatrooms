@@ -2,11 +2,10 @@ import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function SignIn() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
-  const handleSignIn = (event: any) => {
-    event.preventDefault();
-    signIn("github"); // sign in using the GitHub provider
+  const handleSignIn = () => {
+    void signIn("github"); // sign in using the GitHub provider
   };
 
   //if user is already logged in, redirect to home
