@@ -82,8 +82,8 @@ const Chatrooms: React.FC = () => {
       {!chatrooms || chatrooms?.length < 1 ? (
         <p className="p-4">No chatrooms. create one!</p>
       ) : (
-        chatrooms?.map((chatroom) => (
-          <div className="flex w-full border-2 ">
+        chatrooms?.map((chatroom, i) => (
+          <div key={i} className="flex w-full border-2 ">
             <div
               key={chatroom.id}
               className="flex-1 cursor-pointer items-center justify-between gap-4 p-4 hover:underline"
