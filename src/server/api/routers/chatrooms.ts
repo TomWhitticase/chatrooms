@@ -3,6 +3,12 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const chatroomRouter = createTRPCRouter({
+  getRoom: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.chatroom.findUnique({ where: { id: input.id } });
+    }),
+
   getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.chatroom.findMany();
   }),

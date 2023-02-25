@@ -15,7 +15,7 @@ export default Home;
 
 const Chatrooms: React.FC = () => {
   const router = useRouter();
-  const { data: sessionData } = useSession();
+  const { data: sessionData, status } = useSession();
 
   const [nameInput, setNameInput] = React.useState("");
 
@@ -34,6 +34,13 @@ const Chatrooms: React.FC = () => {
       void refetchChatrooms();
     },
   });
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (status === "unauthenticated") {
+    return <p>You must be logged in</p>;
+  }
 
   return (
     <div>
