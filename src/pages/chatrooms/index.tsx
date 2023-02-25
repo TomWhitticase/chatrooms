@@ -44,7 +44,7 @@ const Chatrooms: React.FC = () => {
         You must be logged in
         <button
           className="rounded-lg bg-blue-500 p-2 text-white"
-          onClick={() => signIn()}
+          onClick={() => void signIn()}
         >
           <a>Sign in</a>
         </button>
