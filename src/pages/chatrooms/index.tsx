@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { api } from "~/utils/api";
@@ -39,14 +39,21 @@ const Chatrooms: React.FC = () => {
   }
 
   if (status === "unauthenticated") {
-    return <p>You must be logged in</p>;
+    return (
+      <div className="flex h-[calc(100vh-4rem)] w-full flex-col items-center justify-center gap-4">
+        You must be logged in
+        <button
+          className="rounded-lg bg-blue-500 p-2 text-white"
+          onClick={() => signIn()}
+        >
+          <a>Sign in</a>
+        </button>
+      </div>
+    );
   }
 
   return (
     <div>
-      <div>
-        <h1>Chatrooms</h1>
-      </div>
       <form
         className="flex gap-4 p-4"
         onSubmit={(e) => {
@@ -63,47 +70,46 @@ const Chatrooms: React.FC = () => {
       >
         <input
           type="text"
-          className="input-bordered input"
-          placeholder="Name"
+          className="input-bordered input w-full border-2"
+          placeholder="New chatroom name"
           value={nameInput}
           onChange={(e) => setNameInput(e.target.value)}
         />
-        <button className="btn" type="submit">
+        <button className="rounded bg-blue-500 px-2 text-white" type="submit">
           Create
         </button>
       </form>
       {!chatrooms || chatrooms?.length < 1 ? (
-        <p>No chatrooms</p>
+        <p className="p-4">No chatrooms. create one!</p>
       ) : (
         chatrooms?.map((chatroom) => (
-          <div
-            key={chatroom.id}
-            className="flex items-center justify-between gap-4"
-          >
-            <div className="flex flex-col">
-              <button
-                onClick={() => {
-                  void router.push(`/chatrooms/${chatroom.id}`);
-                }}
-              >
-                <h2 className="text-2xl">{chatroom.name}</h2>
-              </button>
-            </div>
-            <button
-              className="btn"
+          <div className="flex w-full border-2 ">
+            <div
+              key={chatroom.id}
+              className="flex-1 cursor-pointer items-center justify-between gap-4 p-4 hover:underline"
               onClick={() => {
-                void deleteChatroom.mutate(
-                  { id: chatroom.id },
-                  {
-                    onSuccess: () => {
-                      void refetchChatrooms();
-                    },
-                  }
-                );
+                void router.push(`/chatrooms/${chatroom.id}`);
               }}
             >
-              Delete
-            </button>
+              <h2 className="text-2xl">{chatroom.name}</h2>
+            </div>
+            <div className="flex items-center">
+              <button
+                className="rounded-lg bg-slate-500 p-2 text-white"
+                onClick={() => {
+                  void deleteChatroom.mutate(
+                    { id: chatroom.id },
+                    {
+                      onSuccess: () => {
+                        void refetchChatrooms();
+                      },
+                    }
+                  );
+                }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))
       )}

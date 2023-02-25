@@ -96,91 +96,117 @@ const Messages: React.FC = () => {
   if (status === "unauthenticated") {
     return <p>You must be logged in</p>;
   }
+  const handleDeleteMessage = (id: string) => {
+    void deleteMessage.mutate(
+      { id: id },
+      {
+        onSuccess: () => {
+          void refetchMessages();
+        },
+      }
+    );
+  };
   return (
-    <div>
-      <div>
-        <h1>Chatroom Name: {chatroom?.name}</h1>
-      </div>
-
-      <div
-        className="h-96  overflow-y-auto scroll-smooth"
-        ref={chatContainerRef}
-      >
-        <div className="flex h-96 items-end justify-center border-b-2 border-b-slate-500">
-          Start of chat
-        </div>
-        {messages?.map((message) => (
-          <div
-            key={message.id}
-            className="flex w-full flex-col items-center justify-between gap-4"
+    <>
+      <div className="p-4">
+        <div className="flex w-full justify-between">
+          <button
+            onClick={() => {
+              router.push("/chatrooms");
+            }}
+            className="p-4"
           >
-            <div className="flex w-full flex-row justify-between">
-              <div className="flex w-full flex-row items-center justify-start gap-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              className="h-6 w-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+              />
+            </svg>
+          </button>
+          <h1 className="p-4 text-2xl">Chatroom Name: {chatroom?.name}</h1>
+        </div>
+
+        <div
+          className="h-96 overflow-y-auto scroll-smooth border-2"
+          ref={chatContainerRef}
+        >
+          <div className="flex h-96 items-end justify-center border-b-2 border-b-slate-500">
+            Start of chat
+          </div>
+          {messages?.map((message) => (
+            <div
+              className={`flex w-full ${
+                message.senderId === sessionData?.user.id
+                  ? "flex-row-reverse"
+                  : ""
+              } gap-2 p-2`}
+            >
+              <div>
                 <Image
                   className="rounded-full"
-                  width={40}
-                  height={40}
-                  src={message.sender.image || ""}
-                  alt={message.sender.name || ""}
+                  src={message.sender.image ?? ""}
+                  alt={message.sender.name ?? ""}
+                  width={30}
+                  height={30}
                 />
-                <div className="flex flex-col">
-                  <h2 className="text-2xl font-bold">{message.sender.name}</h2>
-                  <p className="text-2xl">{message.content}</p>
-                </div>
               </div>
-              <button
-                className="btn"
-                onClick={() => {
-                  void deleteMessage.mutate(
-                    { id: message.id },
-                    {
-                      onSuccess: () => {
-                        void refetchMessages();
-                      },
-                    }
-                  );
-                }}
+              <div
+                className={`w-min rounded-lg ${
+                  message.senderId === sessionData?.user.id
+                    ? "bg-blue-500 text-white"
+                    : "bg-slate-200 text-slate-800"
+                }  p-2 `}
               >
-                Delete
-              </button>
+                {message.content}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-      <pre>{isTypingText || " "} </pre>
-      <form
-        className="flex gap-4 p-4"
-        onSubmit={(e) => {
-          //create new chatroom
-          e.preventDefault();
+      <div>
+        <pre>{isTypingText || " "} </pre>
+        <form
+          className="flex gap-4 bg-slate-600 p-4"
+          onSubmit={(e) => {
+            //create new chatroom
+            e.preventDefault();
 
-          //clear inputs
-          setMessageInput("");
+            //clear inputs
+            setMessageInput("");
 
-          void createMessage.mutate({
-            chatroomId: chatroomId?.toString() ?? "",
-            content: messageInput,
-          });
-        }}
-      >
-        <input
-          type="text"
-          className="input-bordered input w-full border-2"
-          placeholder="Type your message here..."
-          value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
-          onKeyDown={() => {
-            socket.emit(
-              "user-typing",
-              `${sessionData?.user.name || ""} is typing...`
-            );
+            void createMessage.mutate({
+              chatroomId: chatroomId?.toString() ?? "",
+              content: messageInput,
+            });
           }}
-        />
+        >
+          <input
+            type="text"
+            className="input-bordered input w-full border-2"
+            placeholder="Type your message here..."
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+            onKeyDown={() => {
+              socket.emit(
+                "user-typing",
+                `${sessionData?.user.name || ""} is typing...`
+              );
+            }}
+          />
 
-        <button className="rounded bg-blue-500 px-2 text-white" type="submit">
-          Send
-        </button>
-      </form>
-    </div>
+          <button className="rounded bg-blue-500 px-2 text-white" type="submit">
+            Send
+          </button>
+        </form>
+      </div>
+    </>
   );
 };

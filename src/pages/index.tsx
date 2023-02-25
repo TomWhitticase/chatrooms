@@ -5,16 +5,6 @@ import Link from "next/link";
 import React from "react";
 
 const Home: NextPage = () => {
-  const { data: session, status } = useSession();
-
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
-
-  if (status === "unauthenticated") {
-    return <p>You must be logged in</p>;
-  }
-
   return (
     <>
       <Head>
@@ -27,7 +17,7 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center py-2">
         <Link href="/chatrooms">
-          <button className="rounded-lg p-4 text-2xl font-bold shadow-lg">
+          <button className="rounded-lg border-2 p-4 text-2xl font-bold shadow-lg">
             Join a chatroom
           </button>
         </Link>

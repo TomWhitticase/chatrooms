@@ -5,12 +5,12 @@ export const Header = () => {
   const { data: sessionData } = useSession();
 
   return (
-    <div className="flex h-[4rem] w-full justify-between bg-slate-600 p-4">
+    <div className="flex h-[4rem] w-full justify-between bg-slate-600 p-4 text-white">
       <div className="flex-1 pl-5 text-3xl font-bold">Chat</div>
       {sessionData?.user?.name ? (
         <div className="flex gap-4">
           <button
-            className="rounded bg-blue-500 text-white"
+            className="rounded bg-blue-500 px-2 text-white"
             onClick={() => void signOut()}
           >
             Sign out
@@ -26,7 +26,7 @@ export const Header = () => {
       ) : (
         <>
           <button
-            className="rounded bg-blue-500 text-white"
+            className="rounded bg-blue-500 px-2 text-white"
             onClick={() => void signIn()}
           >
             Sign In
