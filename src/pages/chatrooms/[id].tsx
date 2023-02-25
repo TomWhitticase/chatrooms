@@ -38,6 +38,7 @@ const Messages: React.FC = () => {
   const createMessage = api.message.create.useMutation({
     onSuccess: () => {
       socket.emit("update-messages", "yay!");
+      refetchMessages();
     },
   });
   const deleteMessage = api.message.delete.useMutation({
