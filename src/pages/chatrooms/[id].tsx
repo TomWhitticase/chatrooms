@@ -108,7 +108,7 @@ const Messages: React.FC = () => {
   // };
   return (
     <>
-      <div className="p-4">
+      <div className="">
         <div className="flex w-full justify-between">
           <button
             onClick={() => {
@@ -135,52 +135,55 @@ const Messages: React.FC = () => {
         </div>
 
         <div
-          className="h-96 overflow-y-auto scroll-smooth border-2"
+          className="h-96 overflow-y-auto scroll-smooth"
           ref={chatContainerRef}
         >
           <div className="flex h-96 items-end justify-center border-b-2 border-b-slate-500">
             Start of chat
           </div>
-          {messages?.map((message, i) => (
-            <div
-              key={i}
-              className={`flex w-full ${
-                message.senderId === sessionData?.user.id
-                  ? "flex-row-reverse"
-                  : ""
-              } gap-2 p-2`}
-            >
-              <div>
-                <Image
-                  className="rounded-full"
-                  src={message.sender.image ?? ""}
-                  alt={message.sender.name ?? ""}
-                  width={30}
-                  height={30}
-                />
-              </div>
-              <div>
-                <p
-                  className={`p-2 text-xs ${
-                    message.senderId === sessionData?.user.id
-                      ? "text-right"
-                      : "text-left"
-                  } `}
-                >
-                  {message.sentAt.toLocaleString()}
-                </p>
-                <div
-                  className={`max-w-[20rem] rounded-xl  ${
-                    message.senderId === sessionData?.user.id
-                      ? "rounded-tr-none bg-blue-500 text-white"
-                      : "rounded-tl-none bg-slate-200 text-slate-800"
-                  }  p-2 `}
-                >
-                  {message.content}
+          {messages
+            ?.sort((a, b) => a.sentAt.getTime() - b.sentAt.getTime())
+            .map((message, i) => (
+              <div
+                key={i}
+                className={`flex w-full ${
+                  message.senderId === sessionData?.user.id
+                    ? "flex-row-reverse"
+                    : ""
+                } gap-2 p-2`}
+              >
+                <div className="align-stretch flex items-end justify-center">
+                  <Image
+                    className="rounded-full"
+                    src={message.sender.image ?? ""}
+                    alt={message.sender.name ?? ""}
+                    width={30}
+                    height={30}
+                  />
+                </div>
+
+                <div>
+                  <p
+                    className={`p-2 text-xs ${
+                      message.senderId === sessionData?.user.id
+                        ? "text-right"
+                        : "text-left"
+                    } `}
+                  >
+                    {message.sentAt.toLocaleString()}
+                  </p>
+                  <div
+                    className={`max-w-[20rem] rounded-xl  ${
+                      message.senderId === sessionData?.user.id
+                        ? "rounded-br-none bg-blue-500 text-white"
+                        : "rounded-bl-none bg-slate-200 text-slate-800"
+                    }  p-2 `}
+                  >
+                    {message.content}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
       <div>
