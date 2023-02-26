@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { api } from "~/utils/api";
 import { io } from "socket.io-client";
 import type { Socket } from "socket.io-client";
+import { Message } from "@prisma/client";
 let socket: Socket;
 
 const Chatroom: NextPage = () => {
@@ -141,51 +142,86 @@ const Messages: React.FC = () => {
           <div className="flex h-96 items-end justify-center border-b-2 border-b-slate-500">
             Start of chat
           </div>
-          {messages
+          {messages // Iterate over each message and sort by sentAt time
             ?.sort((a, b) => a.sentAt.getTime() - b.sentAt.getTime())
-            .map((message, i) => (
-              <div
-                key={i}
-                className={`flex w-full ${
-                  message.senderId === sessionData?.user.id
-                    ? "flex-row-reverse"
-                    : ""
-                } gap-2 p-2`}
-              >
-                <div className="align-stretch flex items-end justify-center">
-                  <Image
-                    className="rounded-full"
-                    src={message.sender.image ?? ""}
-                    alt={message.sender.name ?? ""}
-                    width={30}
-                    height={30}
-                  />
-                </div>
+            .map((message, i, arr) => {
+              // Get the previous and next messages in the array
+              const lastMessage = arr[i - 1];
+              const nextMessage = arr[i + 1];
 
-                <div>
-                  <p
-                    className={`p-2 text-xs ${
-                      message.senderId === sessionData?.user.id
-                        ? "text-right"
-                        : "text-left"
-                    } `}
-                  >
-                    {message.sentAt.toLocaleString()}
-                  </p>
-                  <div
-                    className={`max-w-[20rem] rounded-xl  ${
-                      message.senderId === sessionData?.user.id
-                        ? "rounded-br-none bg-blue-500 text-white"
-                        : "rounded-bl-none bg-slate-200 text-slate-800"
-                    }  p-2 `}
-                  >
-                    {message.content}
+              // Determine whether to show the date for this message and the next message
+              const showMessageDate =
+                !lastMessage ||
+                lastMessage.senderId !== message.senderId ||
+                (message.sentAt.getTime() - lastMessage.sentAt.getTime()) /
+                  1000 >
+                  60;
+              const showNextMessageDate =
+                !nextMessage ||
+                nextMessage.senderId !== message.senderId ||
+                (nextMessage.sentAt.getTime() - message.sentAt.getTime()) /
+                  1000 >
+                  60;
+
+              return (
+                <div
+                  key={i}
+                  className={`flex w-full ${
+                    message.senderId === sessionData?.user.id
+                      ? "flex-row-reverse"
+                      : ""
+                  } gap-2 p-[0.1rem]`}
+                >
+                  <div className="align-stretch flex items-end justify-center">
+                    {showNextMessageDate ? ( // If the next message shows the date, display the sender's profile image
+                      <Image
+                        className="rounded-full"
+                        src={message.sender.image ?? ""}
+                        alt={message.sender.name ?? ""}
+                        width={30}
+                        height={30}
+                      />
+                    ) : (
+                      <div className="w-[30px]"> </div> // Otherwise, display an empty div
+                    )}
+                  </div>
+
+                  <div>
+                    {showMessageDate && ( // If this message shows the date, display the date and time
+                      <p
+                        className={`p-2 text-xs ${
+                          message.senderId === sessionData?.user.id
+                            ? "text-right"
+                            : "text-left"
+                        } `}
+                      >
+                        {message.sentAt.toLocaleString().slice(0, 17)}
+                      </p>
+                    )}
+                    <div // Display the message content and set the appropriate styling
+                      className={`max-w-[20rem] rounded-sm p-2 ${
+                        message.senderId === sessionData?.user.id
+                          ? "rounded-l-xl"
+                          : "rounded-r-xl"
+                      } ${
+                        message.senderId === sessionData?.user.id
+                          ? `${showMessageDate && `rounded-tr-xl`} ${
+                              showNextMessageDate && `rounded-br-xl`
+                            } bg-blue-500 text-white`
+                          : `${showMessageDate && `rounded-tl-xl`} ${
+                              showNextMessageDate && `rounded-bl-xl`
+                            } bg-slate-200 text-slate-800`
+                      }`}
+                    >
+                      {message.content}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
         </div>
       </div>
+
       <div>
         <pre>{isTypingText || " "} </pre>
         <form
