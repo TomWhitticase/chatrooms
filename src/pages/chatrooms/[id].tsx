@@ -206,11 +206,11 @@ const Messages: React.FC = () => {
                           : "rounded-r-xl"
                       } ${
                         message.senderId === sessionData?.user.id
-                          ? `${showMessageDate && `rounded-tr-xl`} ${
-                              showNextMessageDate && `rounded-br-xl`
+                          ? `${showMessageDate ? `rounded-tr-xl` : ``} ${
+                              showNextMessageDate ? `rounded-br-xl` : ``
                             } bg-blue-500 text-white`
-                          : `${showMessageDate && `rounded-tl-xl`} ${
-                              showNextMessageDate && `rounded-bl-xl`
+                          : `${showMessageDate ? `rounded-tl-xl` : ``} ${
+                              showNextMessageDate ? `rounded-bl-xl` : ``
                             } bg-slate-200 text-slate-800`
                       }`}
                     >
