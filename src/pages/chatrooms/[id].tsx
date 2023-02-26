@@ -159,14 +159,25 @@ const Messages: React.FC = () => {
                   height={30}
                 />
               </div>
-              <div
-                className={`w-min rounded-lg ${
-                  message.senderId === sessionData?.user.id
-                    ? "bg-blue-500 text-white"
-                    : "bg-slate-200 text-slate-800"
-                }  p-2 `}
-              >
-                {message.content}
+              <div>
+                <p
+                  className={`p-2 text-xs ${
+                    message.senderId === sessionData?.user.id
+                      ? "text-right"
+                      : "text-left"
+                  } `}
+                >
+                  {message.sentAt.toLocaleString()}
+                </p>
+                <div
+                  className={`max-w-[20rem] rounded-xl  ${
+                    message.senderId === sessionData?.user.id
+                      ? "rounded-tr-none bg-blue-500 text-white"
+                      : "rounded-tl-none bg-slate-200 text-slate-800"
+                  }  p-2 `}
+                >
+                  {message.content}
+                </div>
               </div>
             </div>
           ))}
