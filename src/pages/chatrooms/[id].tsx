@@ -74,6 +74,7 @@ const Messages: React.FC = () => {
 
     socket.on("update-messages", () => {
       void refetchMessages();
+      setIsTypingText("");
       console.log("socket message recieved");
     });
     socket.on("user-typing", (msg: string) => {
@@ -88,7 +89,7 @@ const Messages: React.FC = () => {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isTypingText]);
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -109,8 +110,8 @@ const Messages: React.FC = () => {
   // };
   return (
     <>
-      <div className="">
-        <div className="flex w-full justify-between">
+      <div className="relative">
+        <div className="flex h-[4rem] w-full justify-between">
           <button
             onClick={() => {
               void router.push("/chatrooms");
@@ -132,14 +133,14 @@ const Messages: React.FC = () => {
               />
             </svg>
           </button>
-          <h1 className="p-4 text-2xl">Chatroom Name: {chatroom?.name}</h1>
+          <h1 className="p-2 text-2xl">Chatroom Name: {chatroom?.name}</h1>
         </div>
 
         <div
-          className="h-96 overflow-y-auto scroll-smooth"
+          className="h-[calc(100vh-12rem)] overflow-y-auto scroll-smooth pb-2"
           ref={chatContainerRef}
         >
-          <div className="flex h-96 items-end justify-center border-b-2 border-b-slate-500">
+          <div className="flex h-[calc(100vh-12rem)] items-end justify-center border-b-2 border-b-slate-500">
             Start of chat
           </div>
           {messages // Iterate over each message and sort by sentAt time
@@ -219,13 +220,25 @@ const Messages: React.FC = () => {
                 </div>
               );
             })}
+          <div className={`flex w-full gap-2 p-[0.1rem]`}>
+            <div className="align-stretch flex items-end justify-center">
+              <div className="w-[30px]"> </div>
+            </div>
+
+            <div className={`${isTypingText ? "" : "hidden"}`}>
+              <div // Display the message content and set the appropriate styling
+                className={`max-w-[20rem] rounded-xl bg-slate-200 p-2 text-slate-800`}
+              >
+                {isTypingText}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div>
-        <pre>{isTypingText || " "} </pre>
+      <div className="h-[4rem]">
         <form
-          className="flex gap-4 bg-slate-600 p-4"
+          className="flex gap-4 border-t-2 p-2"
           onSubmit={(e) => {
             //create new chatroom
             e.preventDefault();
@@ -241,7 +254,7 @@ const Messages: React.FC = () => {
         >
           <input
             type="text"
-            className="input-bordered input w-full border-2"
+            className="w-full rounded-xl border-2 p-2"
             placeholder="Type your message here..."
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
