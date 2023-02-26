@@ -9,6 +9,8 @@ import type { Socket } from "socket.io-client";
 import { User } from "@prisma/client";
 import { useUsersTyping } from "~/hooks/useUsersTyping";
 import ReactLoading from "react-loading";
+import Avatar from "~/components/Avatar";
+import { Box, Button, Input } from "@chakra-ui/react";
 let socket: Socket;
 
 const Chatroom: NextPage = () => {
@@ -167,13 +169,7 @@ const Messages: React.FC = () => {
                   >
                     <div className="align-stretch flex items-end justify-center">
                       {showNextMessageDate ? ( // If the next message shows the date, display the sender's profile image
-                        <Image
-                          className="rounded-full"
-                          src={message.sender.image ?? ""}
-                          alt={message.sender.name ?? ""}
-                          width={30}
-                          height={30}
-                        />
+                        <Avatar user={message.sender} />
                       ) : (
                         <div className="w-[30px]"> </div> // Otherwise, display an empty div
                       )}
@@ -191,22 +187,30 @@ const Messages: React.FC = () => {
                           {message.sentAt.toLocaleString().slice(0, 17)}
                         </p>
                       )}
-                      <div // Display the message content and set the appropriate styling
-                        className={`max-w-[20rem] rounded-sm p-2 ${
+                      <div
+                        className={`flex justify-${
                           message.senderId === sessionData?.user.id
-                            ? "rounded-l-xl"
-                            : "rounded-r-xl"
-                        } ${
-                          message.senderId === sessionData?.user.id
-                            ? `${showMessageDate ? `rounded-tr-xl` : ``} ${
-                                showNextMessageDate ? `rounded-br-xl` : ``
-                              } bg-blue-500 text-white`
-                            : `${showMessageDate ? `rounded-tl-xl` : ``} ${
-                                showNextMessageDate ? `rounded-bl-xl` : ``
-                              } bg-slate-200 text-slate-800`
+                            ? "end"
+                            : "start"
                         }`}
                       >
-                        {message.content}
+                        <Box // Display the message content and set the appropriate styling
+                          className={`max-w-[20rem] rounded-sm p-2 ${
+                            message.senderId === sessionData?.user.id
+                              ? "rounded-l-xl"
+                              : "rounded-r-xl"
+                          } ${
+                            message.senderId === sessionData?.user.id
+                              ? `${showMessageDate ? `rounded-tr-xl` : ``} ${
+                                  showNextMessageDate ? `rounded-br-xl` : ``
+                                } bg-blue-500 text-white`
+                              : `${showMessageDate ? `rounded-tl-xl` : ``} ${
+                                  showNextMessageDate ? `rounded-bl-xl` : ``
+                                } bg-slate-200 text-slate-800`
+                          }`}
+                        >
+                          {message.content}
+                        </Box>
                       </div>
                     </div>
                   </div>
@@ -218,13 +222,7 @@ const Messages: React.FC = () => {
                 className={`flex w-full gap-2 p-[0.1rem]`}
               >
                 <div className="align-stretch flex items-end justify-center">
-                  <Image
-                    className="rounded-full"
-                    src={user.image ?? ""}
-                    alt={user.name ?? ""}
-                    width={30}
-                    height={30}
-                  />
+                  <Avatar user={user} />
                 </div>
 
                 <div className="">
@@ -248,7 +246,7 @@ const Messages: React.FC = () => {
 
       <div className="h-[4rem]">
         <form
-          className="flex gap-4 border-t-2 p-2"
+          className="flex gap-4 p-2"
           onSubmit={(e) => {
             //create new chatroom
             e.preventDefault();
@@ -262,9 +260,8 @@ const Messages: React.FC = () => {
             });
           }}
         >
-          <input
+          <Input
             type="text"
-            className="w-full rounded-xl border-2 p-2"
             placeholder="Type your message here..."
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
@@ -274,9 +271,9 @@ const Messages: React.FC = () => {
             }}
           />
 
-          <button className="rounded bg-blue-500 px-2 text-white" type="submit">
+          <Button colorScheme={"blue"} type="submit">
             Send
-          </button>
+          </Button>
         </form>
       </div>
     </>
