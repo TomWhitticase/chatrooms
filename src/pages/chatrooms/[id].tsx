@@ -6,8 +6,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { api } from "~/utils/api";
 import { io } from "socket.io-client";
 import type { Socket } from "socket.io-client";
-import { Message, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { useUsersTyping } from "~/hooks/useUsersTyping";
+import ReactLoading from "react-loading";
 let socket: Socket;
 
 const Chatroom: NextPage = () => {
@@ -228,9 +229,15 @@ const Messages: React.FC = () => {
 
                 <div className="">
                   <div // Display the message content and set the appropriate styling
-                    className={`max-w-[20rem] rounded-xl bg-slate-200 p-2 text-slate-800`}
+                    className={`flex max-w-[20rem] gap-2 rounded-xl bg-slate-200 p-2 text-slate-800`}
                   >
-                    typing...
+                    <ReactLoading
+                      type="bubbles"
+                      color="#888"
+                      width={15}
+                      height={15}
+                      delay={0}
+                    />
                   </div>
                 </div>
               </div>
