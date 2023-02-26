@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { Server } from "socket.io";
 import { NextApiRequest, NextApiResponse } from "next";
+import { User } from "@prisma/client";
 
 const SocketHandler = (req: NextApiRequest, res: any) => {
   if (res.socket.server) {
@@ -15,9 +16,8 @@ const SocketHandler = (req: NextApiRequest, res: any) => {
         socket.on("update-messages", (msg) => {
           socket.broadcast.emit("update-messages", msg);
         });
-        socket.on("user-typing", (msg) => {
-          console.log("user is typing");
-          socket.broadcast.emit("user-typing", msg);
+        socket.on("user-typing", (user: User) => {
+          socket.broadcast.emit("user-typing", user);
         });
       });
     }

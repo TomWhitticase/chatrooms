@@ -6,7 +6,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { api } from "~/utils/api";
 import { io } from "socket.io-client";
 import type { Socket } from "socket.io-client";
-import { Message } from "@prisma/client";
+import { Message, User } from "@prisma/client";
+import { useUsersTyping } from "~/hooks/useUsersTyping";
 let socket: Socket;
 
 const Chatroom: NextPage = () => {
@@ -49,17 +50,7 @@ const Messages: React.FC = () => {
   });
 
   //is typing idicator
-  const [isTypingText, setIsTypingText] = useState("");
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setIsTypingText("");
-    }, 1000);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [isTypingText]);
+  const { usersTyping, addUserTyping, clearUsersTyping } = useUsersTyping();
 
   //socket stuff
   useEffect(() => void socketInitializer(), []);
@@ -74,11 +65,10 @@ const Messages: React.FC = () => {
 
     socket.on("update-messages", () => {
       void refetchMessages();
-      setIsTypingText("");
-      console.log("socket message recieved");
+      clearUsersTyping();
     });
-    socket.on("user-typing", (msg: string) => {
-      setIsTypingText(msg);
+    socket.on("user-typing", (user: User) => {
+      addUserTyping(user);
     });
   };
 
@@ -89,7 +79,7 @@ const Messages: React.FC = () => {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     }
-  }, [messages, isTypingText]);
+  }, [messages, usersTyping]);
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -140,99 +130,112 @@ const Messages: React.FC = () => {
           className="h-[calc(100vh-12rem)] overflow-y-auto scroll-smooth pb-2"
           ref={chatContainerRef}
         >
-          <div className="flex h-[calc(100vh-12rem)] items-end justify-center border-b-2 border-b-slate-500">
-            Start of chat
-          </div>
-          {messages // Iterate over each message and sort by sentAt time
-            ?.sort((a, b) => a.sentAt.getTime() - b.sentAt.getTime())
-            .map((message, i, arr) => {
-              // Get the previous and next messages in the array
-              const lastMessage = arr[i - 1];
-              const nextMessage = arr[i + 1];
+          <>
+            <div className="flex h-[calc(100vh-12rem)] items-end justify-center border-b-2 border-b-slate-500">
+              Start of chat
+            </div>
+            {messages // Iterate over each message and sort by sentAt time
+              ?.sort((a, b) => a.sentAt.getTime() - b.sentAt.getTime())
+              .map((message, i, arr) => {
+                // Get the previous and next messages in the array
+                const lastMessage = arr[i - 1];
+                const nextMessage = arr[i + 1];
 
-              // Determine whether to show the date for this message and the next message
-              const showMessageDate =
-                !lastMessage ||
-                lastMessage.senderId !== message.senderId ||
-                (message.sentAt.getTime() - lastMessage.sentAt.getTime()) /
-                  1000 >
-                  60;
-              const showNextMessageDate =
-                !nextMessage ||
-                nextMessage.senderId !== message.senderId ||
-                (nextMessage.sentAt.getTime() - message.sentAt.getTime()) /
-                  1000 >
-                  60;
+                // Determine whether to show the date for this message and the next message
+                const showMessageDate =
+                  !lastMessage ||
+                  lastMessage.senderId !== message.senderId ||
+                  (message.sentAt.getTime() - lastMessage.sentAt.getTime()) /
+                    1000 >
+                    60;
+                const showNextMessageDate =
+                  !nextMessage ||
+                  nextMessage.senderId !== message.senderId ||
+                  (nextMessage.sentAt.getTime() - message.sentAt.getTime()) /
+                    1000 >
+                    60;
 
-              return (
-                <div
-                  key={i}
-                  className={`flex w-full ${
-                    message.senderId === sessionData?.user.id
-                      ? "flex-row-reverse"
-                      : ""
-                  } gap-2 p-[0.1rem]`}
-                >
-                  <div className="align-stretch flex items-end justify-center">
-                    {showNextMessageDate ? ( // If the next message shows the date, display the sender's profile image
-                      <Image
-                        className="rounded-full"
-                        src={message.sender.image ?? ""}
-                        alt={message.sender.name ?? ""}
-                        width={30}
-                        height={30}
-                      />
-                    ) : (
-                      <div className="w-[30px]"> </div> // Otherwise, display an empty div
-                    )}
-                  </div>
+                return (
+                  <div
+                    key={i}
+                    className={`flex w-full ${
+                      message.senderId === sessionData?.user.id
+                        ? "flex-row-reverse"
+                        : ""
+                    } gap-2 p-[0.1rem]`}
+                  >
+                    <div className="align-stretch flex items-end justify-center">
+                      {showNextMessageDate ? ( // If the next message shows the date, display the sender's profile image
+                        <Image
+                          className="rounded-full"
+                          src={message.sender.image ?? ""}
+                          alt={message.sender.name ?? ""}
+                          width={30}
+                          height={30}
+                        />
+                      ) : (
+                        <div className="w-[30px]"> </div> // Otherwise, display an empty div
+                      )}
+                    </div>
 
-                  <div>
-                    {showMessageDate && ( // If this message shows the date, display the date and time
-                      <p
-                        className={`p-2 text-xs ${
+                    <div>
+                      {showMessageDate && ( // If this message shows the date, display the date and time
+                        <p
+                          className={`p-2 text-xs ${
+                            message.senderId === sessionData?.user.id
+                              ? "text-right"
+                              : "text-left"
+                          } `}
+                        >
+                          {message.sentAt.toLocaleString().slice(0, 17)}
+                        </p>
+                      )}
+                      <div // Display the message content and set the appropriate styling
+                        className={`max-w-[20rem] rounded-sm p-2 ${
                           message.senderId === sessionData?.user.id
-                            ? "text-right"
-                            : "text-left"
-                        } `}
+                            ? "rounded-l-xl"
+                            : "rounded-r-xl"
+                        } ${
+                          message.senderId === sessionData?.user.id
+                            ? `${showMessageDate ? `rounded-tr-xl` : ``} ${
+                                showNextMessageDate ? `rounded-br-xl` : ``
+                              } bg-blue-500 text-white`
+                            : `${showMessageDate ? `rounded-tl-xl` : ``} ${
+                                showNextMessageDate ? `rounded-bl-xl` : ``
+                              } bg-slate-200 text-slate-800`
+                        }`}
                       >
-                        {message.sentAt.toLocaleString().slice(0, 17)}
-                      </p>
-                    )}
-                    <div // Display the message content and set the appropriate styling
-                      className={`max-w-[20rem] rounded-sm p-2 ${
-                        message.senderId === sessionData?.user.id
-                          ? "rounded-l-xl"
-                          : "rounded-r-xl"
-                      } ${
-                        message.senderId === sessionData?.user.id
-                          ? `${showMessageDate ? `rounded-tr-xl` : ``} ${
-                              showNextMessageDate ? `rounded-br-xl` : ``
-                            } bg-blue-500 text-white`
-                          : `${showMessageDate ? `rounded-tl-xl` : ``} ${
-                              showNextMessageDate ? `rounded-bl-xl` : ``
-                            } bg-slate-200 text-slate-800`
-                      }`}
-                    >
-                      {message.content}
+                        {message.content}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          <div className={`flex w-full gap-2 p-[0.1rem]`}>
-            <div className="align-stretch flex items-end justify-center">
-              <div className="w-[30px]"> </div>
-            </div>
-
-            <div className={`${isTypingText ? "" : "hidden"}`}>
-              <div // Display the message content and set the appropriate styling
-                className={`max-w-[20rem] rounded-xl bg-slate-200 p-2 text-slate-800`}
+                );
+              })}
+            {usersTyping.map(({ user, time }) => (
+              <div
+                key={time.toString()}
+                className={`flex w-full gap-2 p-[0.1rem]`}
               >
-                {isTypingText}
+                <div className="align-stretch flex items-end justify-center">
+                  <Image
+                    className="rounded-full"
+                    src={user.image ?? ""}
+                    alt={user.name ?? ""}
+                    width={30}
+                    height={30}
+                  />
+                </div>
+
+                <div className="">
+                  <div // Display the message content and set the appropriate styling
+                    className={`max-w-[20rem] rounded-xl bg-slate-200 p-2 text-slate-800`}
+                  >
+                    typing...
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            ))}
+          </>
         </div>
       </div>
 
@@ -258,11 +261,9 @@ const Messages: React.FC = () => {
             placeholder="Type your message here..."
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
-            onKeyDown={() => {
-              socket.emit(
-                "user-typing",
-                `${sessionData?.user.name || ""} is typing...`
-              );
+            onKeyDown={(e) => {
+              if (e.key === "Enter") return;
+              socket.emit("user-typing", sessionData?.user);
             }}
           />
 
