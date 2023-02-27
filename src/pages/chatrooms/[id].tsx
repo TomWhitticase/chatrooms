@@ -118,12 +118,26 @@ const Messages: React.FC = () => {
         }
       }
     );
-    socket.on("user-active", ({ chatroomId: userChatroomId, user }) => {
-      // Only add user to usersActive for the current chatroom
-      if (userChatroomId === chatroomId && user.id !== sessionData?.user?.id) {
-        addUserActive(user);
+    socket.on(
+      "user-active",
+      ({
+        chatroomId: userChatroomId,
+        user,
+      }: {
+        chatroomId: string;
+        user: User;
+      }) => {
+        // Only add user to usersActive for the current chatroom
+        if (!user) return;
+        if (!userChatroomId) return;
+        if (
+          userChatroomId === chatroomId &&
+          user.id !== sessionData?.user?.id
+        ) {
+          addUserActive(user);
+        }
       }
-    });
+    );
 
     sendUserActiveEvent();
   };
