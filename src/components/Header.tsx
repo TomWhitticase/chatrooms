@@ -26,7 +26,7 @@ export const Header = () => {
       borderBottom={"1px solid #e2e8f0"}
     >
       <Heading w={"full"} textAlign={"center"}>
-        Tom's Chatrooms
+        Tom&apos;s Chatrooms
       </Heading>
       {sessionData?.user?.name ? (
         <div className="">
