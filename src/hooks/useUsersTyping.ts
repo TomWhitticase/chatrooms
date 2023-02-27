@@ -2,7 +2,7 @@ import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-export function useUsersTyping() {
+export function useUsersTyping(timeout: number) {
   interface IUserTyping {
     user: User;
     time: Date;
@@ -31,7 +31,7 @@ export function useUsersTyping() {
         setUsersTyping((prev) => {
           return prev.filter((u) => {
             const timeDiff = new Date().getTime() - u.time.getTime();
-            return timeDiff < 5000;
+            return timeDiff < timeout;
           });
         });
       }, 1000);
