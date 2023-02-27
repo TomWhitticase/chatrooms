@@ -110,26 +110,20 @@ const Messages: React.FC = () => {
         user: User;
       }) => {
         // Only add user to usersTyping for the current chatroom
-        if (userChatroomId === chatroomId) {
+        if (
+          userChatroomId === chatroomId &&
+          user.id !== sessionData?.user?.id
+        ) {
           addUserTyping(user);
         }
       }
     );
-    socket.on(
-      "user-active",
-      ({
-        chatroomId: userChatroomId,
-        user,
-      }: {
-        chatroomId: string;
-        user: User;
-      }) => {
-        // Only add user to usersActive for the current chatroom
-        if (userChatroomId === chatroomId) {
-          addUserActive(user);
-        }
+    socket.on("user-active", ({ chatroomId: userChatroomId, user }) => {
+      // Only add user to usersActive for the current chatroom
+      if (userChatroomId === chatroomId && user.id !== sessionData?.user?.id) {
+        addUserActive(user);
       }
-    );
+    });
 
     sendUserActiveEvent();
   };
@@ -195,7 +189,7 @@ const Messages: React.FC = () => {
             </Heading>
           </div>
           <Button
-            colorScheme={displayUsersOnline ? "gray" : "blue"}
+            colorScheme={displayUsersOnline ? "blue" : "gray"}
             onClick={toggleDisplayUsersOnline}
           >
             <FaUser className="mr-1" /> {usersActive.length}
@@ -333,7 +327,7 @@ const Messages: React.FC = () => {
           </div>
           <Flex
             className="flex w-48 flex-col gap-2 p-2"
-            hidden={displayUsersOnline}
+            hidden={!displayUsersOnline}
           >
             <Text>Online - {usersActive.length}</Text>
             {usersActive.length === 0 ? (
