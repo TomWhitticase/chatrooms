@@ -19,6 +19,7 @@ import {
   Heading,
   Input,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import Loading from "react-loading";
 import { ArrowBackIcon } from "@chakra-ui/icons";
@@ -41,6 +42,7 @@ const Messages: React.FC = () => {
   const router = useRouter();
   const { id: chatroomId } = router.query;
   const { data: sessionData, status } = useSession();
+  const toast = useToast();
 
   const [displayUsersOnline, setDisplayUsersOnline] = React.useState(false);
   const toggleDisplayUsersOnline = () => {
@@ -102,6 +104,42 @@ const Messages: React.FC = () => {
     console.log("initialising socket with user: ", sessionData?.user?.name);
     void socketInitializer();
   }, [sessionData, chatroomId]);
+
+  const [prevUsersActive, setPrevUsersActive] = React.useState(usersActive);
+  useEffect(() => {
+    if (prevUsersActive.length === usersActive.length) return;
+    //notify when new user has joined
+    if (prevUsersActive.length < usersActive.length) {
+      const newUser = usersActive.find(
+        (user) => !prevUsersActive.includes(user)
+      );
+      if (newUser) {
+        toast({
+          title: `${newUser.user.name} has joined the chat`,
+          position: "top-right",
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+    }
+    //notify when user has left
+    if (prevUsersActive.length > usersActive.length) {
+      const newUser = prevUsersActive.find(
+        (user) => !usersActive.includes(user)
+      );
+      if (newUser) {
+        toast({
+          title: `${newUser.user.name} has left the chat`,
+          position: "top-right",
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+    }
+
+    console.log("users active changed");
+    setPrevUsersActive(usersActive);
+  }, [usersActive]);
 
   const socketInitializer = async () => {
     await fetch("/api/socket");
