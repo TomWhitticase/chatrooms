@@ -113,7 +113,7 @@ const Messages: React.FC = () => {
       const newUser = usersActive.find(
         (user) => !prevUsersActive.includes(user)
       );
-      if (newUser) {
+      if (newUser?.user) {
         toast({
           title: `${newUser.user.name} has joined the chat`,
           position: "top-right",
@@ -127,7 +127,7 @@ const Messages: React.FC = () => {
       const newUser = prevUsersActive.find(
         (user) => !usersActive.includes(user)
       );
-      if (newUser) {
+      if (newUser?.user) {
         toast({
           title: `${newUser.user.name} has left the chat`,
           position: "top-right",
