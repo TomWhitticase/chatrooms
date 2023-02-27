@@ -177,7 +177,7 @@ const Messages: React.FC = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [sessionData]);
 
   if (status === "loading") {
     return (
