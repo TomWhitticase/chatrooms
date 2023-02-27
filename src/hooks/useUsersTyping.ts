@@ -8,7 +8,6 @@ export function useUsersTyping() {
     time: Date;
   }
   const [usersTyping, setUsersTyping] = useState<IUserTyping[]>([]);
-  const { data: session } = useSession();
 
   const addUserTyping = (user: User) => {
     //add to array

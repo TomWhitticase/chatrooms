@@ -40,17 +40,21 @@ const Messages: React.FC = () => {
     id: chatroomId?.toString() ?? "",
   });
 
+  // Send chatroomId to the socket events
   const createMessage = api.message.create.useMutation({
     onSuccess: () => {
-      socket.emit("update-messages", "yay!");
+      socket.emit("update-messages", chatroomId); // Send chatroomId to the socket event
       void refetchMessages();
     },
   });
   const deleteMessage = api.message.delete.useMutation({
     onSuccess: () => {
-      void socket.emit("update-messages", "yay!");
+      socket.emit("update-messages", chatroomId); // Send chatroomId to the socket event
     },
   });
+  const sendMessageTypingEvent = () => {
+    socket.emit("user-typing", { chatroomId, user: sessionData?.user }); // Send chatroomId to the socket event
+  };
 
   //is typing idicator
   const { usersTyping, addUserTyping, clearUsersTyping } = useUsersTyping();
@@ -66,13 +70,29 @@ const Messages: React.FC = () => {
       console.log("connected");
     });
 
-    socket.on("update-messages", () => {
-      void refetchMessages();
-      clearUsersTyping();
+    // Add chatroomId as a parameter to the socket events
+    socket.on("update-messages", (chatroomId: string) => {
+      // Only refetch messages and clear usersTyping for the current chatroom
+      if (chatroomId === chatroomId) {
+        void refetchMessages();
+        clearUsersTyping();
+      }
     });
-    socket.on("user-typing", (user: User) => {
-      addUserTyping(user);
-    });
+    socket.on(
+      "user-typing",
+      ({
+        chatroomId: userChatroomId,
+        user,
+      }: {
+        chatroomId: string;
+        user: User;
+      }) => {
+        // Only add user to usersTyping for the current chatroom
+        if (userChatroomId === chatroomId) {
+          addUserTyping(user);
+        }
+      }
+    );
   };
 
   //scroll to bottom of chat when new message is added
@@ -130,7 +150,7 @@ const Messages: React.FC = () => {
         </div>
 
         <div
-          className="h-[calc(100vh-12rem)] overflow-y-auto scroll-smooth pb-2"
+          className="h-[calc(100vh-12rem)] overflow-y-auto scroll-smooth p-2"
           ref={chatContainerRef}
         >
           <>
@@ -188,10 +208,10 @@ const Messages: React.FC = () => {
                         </p>
                       )}
                       <div
-                        className={`flex justify-${
+                        className={`flex w-full items-end ${
                           message.senderId === sessionData?.user.id
-                            ? "end"
-                            : "start"
+                            ? "justify-end"
+                            : "justify-start"
                         }`}
                       >
                         <Box // Display the message content and set the appropriate styling
@@ -210,6 +230,21 @@ const Messages: React.FC = () => {
                           }`}
                         >
                           {message.content}
+                          {/* if message is link to image, display image */}
+                          {/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(
+                            message.content
+                          ) && (
+                            <Image
+                              className="cursor-pointer"
+                              src={message.content}
+                              alt={message.content}
+                              width={250}
+                              height={250}
+                              onClick={() => {
+                                window.open(message.content, "_blank");
+                              }}
+                            />
+                          )}
                         </Box>
                       </div>
                     </div>
@@ -267,7 +302,7 @@ const Messages: React.FC = () => {
             onChange={(e) => setMessageInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") return;
-              socket.emit("user-typing", sessionData?.user);
+              sendMessageTypingEvent();
             }}
           />
 
