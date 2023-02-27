@@ -82,7 +82,7 @@ const Messages: React.FC = () => {
     useUsersTyping(5000);
 
   //socket stuff
-  useEffect(() => void socketInitializer(), [sessionData?.user]);
+  useEffect(() => void socketInitializer(), [sessionData?.user, chatroomId]);
 
   const socketInitializer = async () => {
     await fetch("/api/socket");
@@ -128,8 +128,7 @@ const Messages: React.FC = () => {
         user: User;
       }) => {
         // Only add user to usersActive for the current chatroom
-        if (!user) return;
-        if (!userChatroomId) return;
+        if (!user || !userChatroomId) return;
         if (
           userChatroomId === chatroomId &&
           user.id !== sessionData?.user?.id
