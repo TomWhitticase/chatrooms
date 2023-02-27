@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { api } from "~/utils/api";
 import { io } from "socket.io-client";
 import type { Socket } from "socket.io-client";
@@ -10,15 +10,7 @@ import { User } from "@prisma/client";
 import { useUsersTyping } from "~/hooks/useUsersTyping";
 import ReactLoading from "react-loading";
 import Avatar from "~/components/Avatar";
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Heading,
-  Input,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Heading, Input } from "@chakra-ui/react";
 import Loading from "react-loading";
 let socket: Socket;
 
