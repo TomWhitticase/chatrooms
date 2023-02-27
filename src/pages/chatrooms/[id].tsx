@@ -10,6 +10,7 @@ import { User } from "@prisma/client";
 import { useUsersTyping } from "~/hooks/useUsersTyping";
 import ReactLoading from "react-loading";
 import Avatar from "~/components/Avatar";
+import { FaUser } from "react-icons/fa";
 import {
   Box,
   Button,
@@ -20,6 +21,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Loading from "react-loading";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 let socket: Socket;
 
 const Chatroom: NextPage = () => {
@@ -80,7 +82,7 @@ const Messages: React.FC = () => {
     useUsersTyping(5000);
 
   //socket stuff
-  useEffect(() => void socketInitializer(), []);
+  useEffect(() => void socketInitializer(), [sessionData?.user]);
 
   const socketInitializer = async () => {
     await fetch("/api/socket");
@@ -185,26 +187,18 @@ const Messages: React.FC = () => {
               void router.push("/chatrooms");
             }}
           >
-            Back
+            <ArrowBackIcon />
           </Button>
           <div className="flex flex-col">
-            <Heading fontWeight={"semibold"}>{chatroom?.name}</Heading>
+            <Heading size="lg" fontWeight={"semibold"}>
+              {chatroom?.name}
+            </Heading>
           </div>
           <Button
-            colorScheme={displayUsersOnline ? "ghost" : "gray"}
+            colorScheme={displayUsersOnline ? "gray" : "blue"}
             onClick={toggleDisplayUsersOnline}
           >
-            <Flex className="mr-4 items-center justify-center gap-2">
-              <Text color={"black"}>Online - {usersActive.length}</Text>
-              {usersActive.map(({ user, time }) => (
-                <div
-                  key={time.toString()}
-                  className="otuline-white -mr-4 rounded-full"
-                >
-                  <Avatar user={user} />
-                </div>
-              ))}
-            </Flex>
+            <FaUser className="mr-1" /> {usersActive.length}
           </Button>
         </div>
         <div className="flex">
