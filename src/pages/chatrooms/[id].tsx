@@ -10,7 +10,16 @@ import { User } from "@prisma/client";
 import { useUsersTyping } from "~/hooks/useUsersTyping";
 import ReactLoading from "react-loading";
 import Avatar from "~/components/Avatar";
-import { Box, Button, Input } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Heading,
+  Input,
+  Text,
+} from "@chakra-ui/react";
+import Loading from "react-loading";
 let socket: Socket;
 
 const Chatroom: NextPage = () => {
@@ -105,11 +114,19 @@ const Messages: React.FC = () => {
   }, [messages, usersTyping]);
 
   if (status === "loading") {
-    return <p>Loading...</p>;
+    return (
+      <Flex className="h-[calc(100vh-4rem)] w-full flex-col items-center justify-center gap-4">
+        <Loading />
+      </Flex>
+    );
   }
 
   if (status === "unauthenticated") {
-    return <p>You must be logged in</p>;
+    return (
+      <Flex className="h-[calc(100vh-4rem)] w-full flex-col items-center justify-center gap-4">
+        <Heading>You must be logged in to view this page</Heading>
+      </Flex>
+    );
   }
   // const handleDeleteMessage = (id: string) => {
   //   void deleteMessage.mutate(
@@ -124,29 +141,15 @@ const Messages: React.FC = () => {
   return (
     <>
       <div className="relative">
-        <div className="flex h-[4rem] w-full justify-between">
-          <button
+        <div className="flex h-[4rem] w-full items-center justify-between px-2">
+          <Button
             onClick={() => {
               void router.push("/chatrooms");
             }}
-            className="p-4"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-              />
-            </svg>
-          </button>
-          <h1 className="p-2 text-2xl">Chatroom Name: {chatroom?.name}</h1>
+            Back
+          </Button>
+          <Heading fontWeight={"semibold"}>{chatroom?.name}</Heading>
         </div>
 
         <div
@@ -154,9 +157,10 @@ const Messages: React.FC = () => {
           ref={chatContainerRef}
         >
           <>
-            <div className="flex h-[calc(100vh-12rem)] items-end justify-center border-b-2 border-b-slate-500">
+            <Box className="flex h-[calc(100vh-12rem)] flex-col items-center justify-end">
               Start of chat
-            </div>
+              <Divider />
+            </Box>
             {messages // Iterate over each message and sort by sentAt time
               ?.sort((a, b) => a.sentAt.getTime() - b.sentAt.getTime())
               .map((message, i, arr) => {

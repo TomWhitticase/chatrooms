@@ -1,7 +1,9 @@
+import { Button, Divider, Flex, Heading, Input } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
+import Loading from "react-loading";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
@@ -35,20 +37,21 @@ const Chatrooms: React.FC = () => {
     },
   });
   if (status === "loading") {
-    return <p>Loading...</p>;
+    return (
+      <Flex className="h-[calc(100vh-4rem)] w-full flex-col items-center justify-center gap-4">
+        <Loading />
+      </Flex>
+    );
   }
 
   if (status === "unauthenticated") {
     return (
-      <div className="flex h-[calc(100vh-4rem)] w-full flex-col items-center justify-center gap-4">
-        You must be logged in
-        <button
-          className="rounded-lg bg-blue-500 p-2 text-white"
-          onClick={() => void signIn()}
-        >
+      <Flex className="h-[calc(100vh-4rem)] w-full flex-col items-center justify-center gap-4">
+        <Heading>You must login using Github</Heading>
+        <Button colorScheme={"blue"} onClick={() => void signIn()}>
           <a>Sign in</a>
-        </button>
-      </div>
+        </Button>
+      </Flex>
     );
   }
 
@@ -68,51 +71,56 @@ const Chatrooms: React.FC = () => {
           });
         }}
       >
-        <input
+        <Input
           type="text"
-          className="input-bordered input w-full border-2"
           placeholder="New chatroom name"
           value={nameInput}
           onChange={(e) => setNameInput(e.target.value)}
         />
-        <button className="rounded bg-blue-500 px-2 text-white" type="submit">
+        <Button colorScheme={"blue"} type="submit">
           Create
-        </button>
+        </Button>
       </form>
-      {!chatrooms || chatrooms?.length < 1 ? (
-        <p className="p-4">No chatrooms. create one!</p>
-      ) : (
-        chatrooms?.map((chatroom, i) => (
-          <div key={i} className="flex w-full border-2 ">
-            <div
-              key={chatroom.id}
-              className="flex-1 cursor-pointer items-center justify-between gap-4 p-4 hover:underline"
-              onClick={() => {
-                void router.push(`/chatrooms/${chatroom.id}`);
-              }}
-            >
-              <h2 className="text-2xl">{chatroom.name}</h2>
-            </div>
-            <div className="flex items-center">
-              <button
-                className="rounded-lg bg-slate-500 p-2 text-white"
-                onClick={() => {
-                  void deleteChatroom.mutate(
-                    { id: chatroom.id },
-                    {
-                      onSuccess: () => {
-                        void refetchChatrooms();
-                      },
-                    }
-                  );
-                }}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))
-      )}
+      <Flex px={2} gap={2} flexDirection={"column"}>
+        {!chatrooms || chatrooms?.length < 1 ? (
+          <p className="p-4">No chatrooms. create one!</p>
+        ) : (
+          chatrooms?.map((chatroom, i) => (
+            <>
+              <Flex key={i} px={2} gap={2}>
+                <Button
+                  justifyContent={"flex-start"}
+                  variant={"ghost"}
+                  key={chatroom.id}
+                  className="flex-1"
+                  onClick={() => {
+                    void router.push(`/chatrooms/${chatroom.id}`);
+                  }}
+                >
+                  <h2 className="text-2xl">{chatroom.name}</h2>
+                </Button>
+                <div className="flex items-center">
+                  <Button
+                    onClick={() => {
+                      void deleteChatroom.mutate(
+                        { id: chatroom.id },
+                        {
+                          onSuccess: () => {
+                            void refetchChatrooms();
+                          },
+                        }
+                      );
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </Flex>
+              <Divider />
+            </>
+          ))
+        )}
+      </Flex>
     </div>
   );
 };

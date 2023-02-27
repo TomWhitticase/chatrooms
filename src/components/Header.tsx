@@ -1,38 +1,62 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverArrow,
+  PopoverCloseButton,
+  Button,
+  PopoverFooter,
+  Flex,
+  Heading,
+} from "@chakra-ui/react";
 
 export const Header = () => {
   const { data: sessionData } = useSession();
 
   return (
-    <div className="flex h-[4rem] w-full justify-between bg-slate-600 p-4 text-white">
-      <div className="flex-1 pl-5 text-3xl font-bold">Chat</div>
+    <Flex
+      justifyContent={"space-between"}
+      alignItems={"center"}
+      h={"4rem"}
+      px={2}
+      borderBottom={"1px solid #e2e8f0"}
+    >
+      <Heading w={"full"} textAlign={"center"}>
+        Tom's Chatrooms
+      </Heading>
       {sessionData?.user?.name ? (
-        <div className="flex gap-4">
-          <button
-            className="rounded bg-blue-500 px-2 text-white"
-            onClick={() => void signOut()}
-          >
-            Sign out
-          </button>
-          <Image
-            className="rounded-full"
-            width={30}
-            height={30}
-            src={sessionData?.user.image || ""}
-            alt={sessionData?.user.name || ""}
-          />
+        <div className="">
+          <Popover>
+            <PopoverTrigger>
+              <Image
+                className="cursor-pointer rounded-full"
+                width={30}
+                height={30}
+                src={sessionData?.user.image || ""}
+                alt={sessionData?.user.name || ""}
+              />
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverArrow />
+              <PopoverCloseButton />
+              <PopoverHeader>{sessionData?.user.name}</PopoverHeader>
+              <PopoverBody>{sessionData?.user.email}</PopoverBody>
+              <PopoverFooter>
+                {" "}
+                <Button onClick={() => void signOut()}>Sign out</Button>
+              </PopoverFooter>
+            </PopoverContent>
+          </Popover>
         </div>
       ) : (
         <>
-          <button
-            className="rounded bg-blue-500 px-2 text-white"
-            onClick={() => void signIn()}
-          >
-            Sign In
-          </button>
+          <Button onClick={() => void signIn()}>Sign In</Button>
         </>
       )}
-    </div>
+    </Flex>
   );
 };

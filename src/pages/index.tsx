@@ -1,3 +1,4 @@
+import { Button, Heading } from "@chakra-ui/react";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -15,10 +16,9 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center py-2">
+        <Heading p={4}>Welcome to Tom's chatrooms</Heading>
         <Link href="/chatrooms">
-          <button className="rounded-lg border-2 p-4 text-2xl font-bold shadow-lg">
-            Join a chatroom
-          </button>
+          <Button colorScheme="blue">Join a chatroom</Button>
         </Link>
       </main>
     </>
