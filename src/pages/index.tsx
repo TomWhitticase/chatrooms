@@ -16,7 +16,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center py-2">
-        <Heading p={4}>Welcome to Tom's chatrooms</Heading>
+        <Heading p={4}>Welcome to Tom&apos;s chatrooms</Heading>
         <Link href="/chatrooms">
           <Button colorScheme="blue">Join a chatroom</Button>
         </Link>
