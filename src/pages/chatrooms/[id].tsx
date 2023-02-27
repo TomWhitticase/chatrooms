@@ -116,7 +116,7 @@ const Messages: React.FC = () => {
       if (newUser?.user) {
         toast({
           title: `${
-            newUser?.user ? newUser.user.name : ""
+            newUser.user.name ? newUser.user.name : ""
           } has joined the chat`,
           position: "top-right",
           duration: 2000,
@@ -131,7 +131,9 @@ const Messages: React.FC = () => {
       );
       if (newUser?.user) {
         toast({
-          title: `${newUser?.user ? newUser.user.name : ""} has left the chat`,
+          title: `${
+            newUser.user.name ? newUser.user.name : ""
+          } has left the chat`,
           position: "top-right",
           duration: 2000,
           isClosable: true,
