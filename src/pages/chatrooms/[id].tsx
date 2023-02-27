@@ -128,7 +128,7 @@ const Messages: React.FC = () => {
         user: User;
       }) => {
         // Only add user to usersActive for the current chatroom
-        if (!user || !userChatroomId) return;
+        if (!user || !userChatroomId || !sessionData?.user) return;
         if (
           userChatroomId === chatroomId &&
           user.id !== sessionData?.user?.id
