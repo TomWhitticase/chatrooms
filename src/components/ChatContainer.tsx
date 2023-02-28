@@ -29,7 +29,7 @@ export function ChatContainer({ messages, usersTyping }: IProps) {
 
   return (
     <div
-      className="h-[calc(100vh-12rem)] flex-1 overflow-y-auto scroll-smooth p-2"
+      className="h-[calc(100vh-16rem)] flex-1 overflow-y-auto scroll-smooth p-2"
       ref={chatContainerRef}
     >
       <>
