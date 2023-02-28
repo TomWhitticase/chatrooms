@@ -7,16 +7,21 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
+import { User } from "@prisma/client";
 import { Formik } from "formik";
 import React, { ReactElement, useRef } from "react";
+import Avatar from "./Avatar";
+import ReactLoading from "react-loading";
 
 interface IProps {
   handleSendMessage: (message: string) => void;
   sendMessageTypingEvent: () => void;
+  usersTyping: { user: User; time: Date }[];
 }
 export default function MessageInput({
   handleSendMessage,
   sendMessageTypingEvent,
+  usersTyping,
 }: IProps) {
   const [messageInput, setMessageInput] = React.useState("");
   const [errorText, setErrorText] = React.useState("");
@@ -63,6 +68,26 @@ export default function MessageInput({
         </Flex>
         <Text color={"red"}>{errorText}</Text>
       </form>
+      <div className="flex w-full flex-col gap-1">
+        {usersTyping.map(({ user, time }) => (
+          <div
+            key={time.toString()}
+            className={`flex w-full items-center justify-start p-[0.1rem]`}
+          >
+            <ReactLoading
+              type="bubbles"
+              color="#888"
+              width={30}
+              height={30}
+              delay={0}
+            />
+
+            <Text>
+              <span className="font-bold">{user.name}</span> is typing...
+            </Text>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

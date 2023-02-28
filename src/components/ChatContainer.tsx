@@ -3,7 +3,7 @@ import { Message, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import ReactLoading from "react-loading";
+
 import Avatar from "./Avatar";
 
 interface IProps {
@@ -12,9 +12,8 @@ interface IProps {
         sender: User;
       })[]
     | undefined;
-  usersTyping: { user: User; time: Date }[];
 }
-export function ChatContainer({ messages, usersTyping }: IProps) {
+export function ChatContainer({ messages }: IProps) {
   //session data
   const { data: sessionData } = useSession();
 
@@ -25,7 +24,7 @@ export function ChatContainer({ messages, usersTyping }: IProps) {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     }
-  }, [messages, usersTyping]);
+  }, [messages]);
 
   return (
     <div
@@ -131,27 +130,6 @@ export function ChatContainer({ messages, usersTyping }: IProps) {
               </div>
             );
           })}
-        {usersTyping.map(({ user, time }) => (
-          <div key={time.toString()} className={`flex w-full gap-2 p-[0.1rem]`}>
-            <div className="align-stretch flex items-end justify-center">
-              <Avatar user={user} />
-            </div>
-
-            <div className="">
-              <div // Display the message content and set the appropriate styling
-                className={`flex max-w-[20rem] gap-2 rounded-xl bg-slate-200 p-2 text-slate-800`}
-              >
-                <ReactLoading
-                  type="bubbles"
-                  color="#888"
-                  width={15}
-                  height={15}
-                  delay={0}
-                />
-              </div>
-            </div>
-          </div>
-        ))}
       </>
     </div>
   );

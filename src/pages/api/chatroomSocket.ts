@@ -19,9 +19,6 @@ const SocketHandler = (req: NextApiRequest, res: any) => {
         socket.on("user-typing", (user: User) => {
           socket.broadcast.emit("user-typing", user);
         });
-        socket.on("user-active", (user: User) => {
-          socket.broadcast.emit("user-active", user);
-        });
       });
     }
   }
