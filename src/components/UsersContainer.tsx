@@ -3,70 +3,33 @@ import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import useUsersActive from "~/hooks/useUsersActive";
 import Avatar from "./Avatar";
 let socket: Socket;
 
-export function UsersContainer() {
+interface IProps {
+  show: boolean;
+}
+export function UsersContainer({ show }: IProps) {
   const { data: sessionData } = useSession();
-  const [usersActive, setUsersActive] = useState<{ user: User; time: Date }[]>(
-    []
-  );
+  const { usersActive, addUserActive } = useUsersActive();
 
-  //socket stuff
-  useEffect(() => {
-    void socketInitializer();
-  }, [sessionData]);
-
-  const socketInitializer = async () => {
-    // If there is no session data, don't initialize the socket
-    if (!sessionData) return;
-
-    await fetch("/api/usersSocket");
-    socket = io();
-
-    socket.on("connect", () => {
-      console.log("connected");
-    });
-
-    socket.on("user-active", ({ user, time }: { user: User; time: Date }) => {
-      console.log(user.name, " is active");
-    });
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (sessionData) {
-        console.log("sending user active event");
-        socket.emit("user-active", {
-          user: sessionData.user,
-          time: new Date(),
-        });
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [sessionData, socket]);
-
+  if (!show) return <></>;
   return (
-    <Flex className="flex w-48 flex-col gap-2 p-2">
-      <Text>Online - {usersActive.length}</Text>
-      {usersActive.length === 0 ? (
+    sessionData && (
+      <Flex className="right-0 z-10 flex h-full w-48 flex-col gap-2 border-l-2 border-gray-100 bg-white p-2 mobile-only:fixed">
+        <Text>Online - {usersActive.length + 1}</Text>
         <Flex justifyContent={"start"} alignItems={"center"} gap={2}>
-          <Text>Nobody is online</Text>
+          <Avatar user={sessionData.user as User} />
+          <Text>{sessionData.user.name}</Text>
         </Flex>
-      ) : (
-        usersActive.map(({ user, time }) => (
-          <Flex
-            key={time.toString()}
-            justifyContent={"start"}
-            alignItems={"center"}
-            gap={2}
-          >
+        {usersActive.map(({ user, time }: { user: User; time: Date }, i) => (
+          <Flex key={i} justifyContent={"start"} alignItems={"center"} gap={2}>
             <Avatar user={user} />
             <Text>{user.name}</Text>
           </Flex>
-        ))
-      )}
-    </Flex>
+        ))}
+      </Flex>
+    )
   );
 }

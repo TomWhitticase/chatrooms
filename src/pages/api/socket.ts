@@ -3,7 +3,7 @@ import { Server } from "socket.io";
 import { NextApiRequest, NextApiResponse } from "next";
 import { User } from "@prisma/client";
 
-//Socket for handling sending messages and users typing within a chatroom
+//socket
 
 const SocketHandler = (req: NextApiRequest, res: any) => {
   if (res.socket.server) {
@@ -20,8 +20,12 @@ const SocketHandler = (req: NextApiRequest, res: any) => {
           socket.broadcast.emit("update-messages", msg);
         });
         //when a user starts typing broadcast to all clients so they can update their UI
-        socket.on("user-typing", (user: User) => {
-          socket.broadcast.emit("user-typing", user);
+        socket.on("user-typing", (msg) => {
+          socket.broadcast.emit("user-typing", msg);
+        });
+        //when a user broadcasts they are online, broadcast to all clients
+        socket.on("user-active", (msg) => {
+          socket.broadcast.emit("user-active", msg);
         });
       });
     }

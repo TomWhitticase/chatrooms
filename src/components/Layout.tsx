@@ -16,7 +16,7 @@ export default function Layout({ children }: IProps) {
       />
       <div className="flex">
         <div className="flex-1">{children}</div>
-        {showUsers && <UsersContainer />}
+        <UsersContainer show={showUsers} />
       </div>
     </main>
   );

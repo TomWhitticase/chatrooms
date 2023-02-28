@@ -75,7 +75,7 @@ const Messages: React.FC = () => {
     // If there is no session data, don't initialize the socket
     if (!sessionData) return;
 
-    await fetch("/api/chatroomSocket");
+    await fetch("/api/socket");
     socket = io();
 
     socket.on("connect", () => {
@@ -155,7 +155,7 @@ const Messages: React.FC = () => {
           >
             <ArrowBackIcon />
           </Button>
-          <div className="flex flex-col">
+          <div className="flex flex-col px-4">
             <Heading size="lg" fontWeight={"semibold"}>
               {chatroom?.name}
             </Heading>
