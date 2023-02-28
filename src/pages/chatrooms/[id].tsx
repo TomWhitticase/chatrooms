@@ -84,12 +84,6 @@ const Messages: React.FC = () => {
     socket.emit("user-typing", { chatroomId, user: sessionData?.user }); // Send chatroomId to the socket event
   };
   function sendUserActiveEvent() {
-    console.log(
-      "sending user active event: ",
-      sessionData?.user?.name,
-      " status: ",
-      status
-    );
     socket.emit("user-active", { chatroomId, user: sessionData?.user }); // Send chatroomId to the socket event
   }
 
@@ -101,7 +95,6 @@ const Messages: React.FC = () => {
 
   //socket stuff
   useEffect(() => {
-    console.log("initialising socket with user: ", sessionData?.user?.name);
     void socketInitializer();
   }, [sessionData, chatroomId]);
 
@@ -141,7 +134,6 @@ const Messages: React.FC = () => {
       }
     }
 
-    console.log("users active changed");
     setPrevUsersActive(usersActive);
   }, [usersActive]);
 
