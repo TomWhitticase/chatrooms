@@ -146,6 +146,9 @@ const Messages: React.FC = () => {
   }, [usersActive]);
 
   const socketInitializer = async () => {
+    // If there is no session data, don't initialize the socket
+    if (!sessionData) return;
+
     await fetch("/api/socket");
     socket = io();
 
