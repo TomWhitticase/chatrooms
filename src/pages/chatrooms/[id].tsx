@@ -171,7 +171,6 @@ const Messages: React.FC = () => {
         user: User;
       }) => {
         // Only add user to usersTyping for the current chatroom
-
         if (
           userChatroomId === chatroomId &&
           user.id !== sessionData?.user?.id
