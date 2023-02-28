@@ -4,10 +4,9 @@ import { SessionProvider } from "next-auth/react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ChakraProvider } from "@chakra-ui/react";
 import { api } from "~/utils/api";
-
 import "~/styles/globals.css";
-import { Header } from "~/components/Header";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Layout from "~/components/Layout";
 
 const queryClient = new QueryClient();
 
@@ -19,10 +18,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={session}>
         <ChakraProvider>
-          <main className="flex min-h-screen flex-col">
-            <Header />
+          <Layout>
             <Component {...pageProps} />
-          </main>
+          </Layout>
         </ChakraProvider>
       </SessionProvider>
       <ReactQueryDevtools initialIsOpen={false} />

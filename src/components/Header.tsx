@@ -13,8 +13,14 @@ import {
   Flex,
   Heading,
 } from "@chakra-ui/react";
+import { FaUsers } from "react-icons/fa";
 
-export const Header = () => {
+interface IProps {
+  showUsers: boolean;
+  toggleShowUsers: () => void;
+}
+
+export const Header = ({ showUsers, toggleShowUsers }: IProps) => {
   const { data: sessionData } = useSession();
 
   return (
@@ -29,28 +35,38 @@ export const Header = () => {
         Tom&apos;s Chatrooms
       </Heading>
       {sessionData?.user?.name ? (
-        <div className="">
-          <Popover>
-            <PopoverTrigger>
-              <Image
-                className="cursor-pointer rounded-full"
-                width={30}
-                height={30}
-                src={sessionData?.user.image || ""}
-                alt={sessionData?.user.name || ""}
-              />
-            </PopoverTrigger>
-            <PopoverContent>
-              <PopoverArrow />
-              <PopoverCloseButton />
-              <PopoverHeader>{sessionData?.user.name}</PopoverHeader>
-              <PopoverBody>{sessionData?.user.email}</PopoverBody>
-              <PopoverFooter>
-                {" "}
-                <Button onClick={() => void signOut()}>Sign out</Button>
-              </PopoverFooter>
-            </PopoverContent>
-          </Popover>
+        <div className="flex gap-4">
+          <div className="flex items-center justify-center">
+            <Popover>
+              <PopoverTrigger>
+                <Image
+                  unoptimized
+                  className="cursor-pointer rounded-full"
+                  width={40}
+                  height={40}
+                  src={sessionData?.user.image || ""}
+                  alt={sessionData?.user.name || ""}
+                />
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverHeader>{sessionData?.user.name}</PopoverHeader>
+                <PopoverBody>{sessionData?.user.email}</PopoverBody>
+                <PopoverFooter>
+                  {" "}
+                  <Button onClick={() => void signOut()}>Sign out</Button>
+                </PopoverFooter>
+              </PopoverContent>
+            </Popover>
+          </div>
+          <Button
+            className="flex items-center justify-center"
+            colorScheme={showUsers ? "blue" : "gray"}
+            onClick={toggleShowUsers}
+          >
+            <FaUsers size={30} />
+          </Button>
         </div>
       ) : (
         <>
