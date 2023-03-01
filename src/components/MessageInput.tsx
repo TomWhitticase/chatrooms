@@ -1,16 +1,7 @@
-import {
-  Button,
-  Flex,
-  FormControl,
-  FormHelperText,
-  FormLabel,
-  Input,
-  Text,
-} from "@chakra-ui/react";
+import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { User } from "@prisma/client";
-import { Formik } from "formik";
-import React, { ReactElement, useRef } from "react";
-import Avatar from "./Avatar";
+import { useState } from "react";
+
 import ReactLoading from "react-loading";
 
 interface IProps {
@@ -23,8 +14,8 @@ export default function MessageInput({
   sendMessageTypingEvent,
   usersTyping,
 }: IProps) {
-  const [messageInput, setMessageInput] = React.useState("");
-  const [errorText, setErrorText] = React.useState("");
+  const [messageInput, setMessageInput] = useState("");
+  const [errorText, setErrorText] = useState("");
   return (
     <div className="h-[8rem] p-4">
       <form

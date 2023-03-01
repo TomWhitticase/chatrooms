@@ -1,11 +1,8 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
 import useUsersActive from "~/hooks/useUsersActive";
 import Avatar from "./Avatar";
-let socket: Socket;
 
 interface IProps {
   show: boolean;
