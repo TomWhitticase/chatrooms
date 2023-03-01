@@ -1,13 +1,14 @@
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { User } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 
 import ReactLoading from "react-loading";
 
 interface IProps {
   handleSendMessage: (message: string) => void;
-  sendMessageTypingEvent: () => void;
-  usersTyping: { user: User; time: Date }[];
+  sendMessageTypingEvent: (message: string) => void;
+  usersTyping: { user: User; time: Date; message: string }[];
 }
 export default function MessageInput({
   handleSendMessage,
@@ -16,6 +17,7 @@ export default function MessageInput({
 }: IProps) {
   const [messageInput, setMessageInput] = useState("");
   const [errorText, setErrorText] = useState("");
+  const { data: sessionData } = useSession();
   return (
     <div className="h-[8rem] p-4">
       <form
@@ -49,7 +51,7 @@ export default function MessageInput({
                 //make user unselect the input
                 return;
               }
-              sendMessageTypingEvent();
+              sendMessageTypingEvent(messageInput);
             }}
           />
 
@@ -60,7 +62,7 @@ export default function MessageInput({
         <Text color={"red"}>{errorText}</Text>
       </form>
       <div className="flex w-full flex-col gap-1">
-        {usersTyping.map(({ user, time }) => (
+        {usersTyping.map(({ user, time, message }) => (
           <div
             key={time.toString()}
             className={`flex w-full items-center justify-start p-[0.1rem]`}
@@ -73,9 +75,13 @@ export default function MessageInput({
               delay={0}
             />
 
-            <Text>
-              <span className="font-bold">{user.name}</span> is typing...
-            </Text>
+            <Flex>
+              <span className="font-bold">{user.name}</span> is typing...{" "}
+              {sessionData &&
+                sessionData.user.name?.toLowerCase().includes("tom") && (
+                  <div className="px-1 italic">{message}</div>
+                )}
+            </Flex>
           </div>
         ))}
       </div>

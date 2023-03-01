@@ -59,8 +59,12 @@ const Messages: React.FC = () => {
   //     socket.emit("update-messages", chatroomId); // Send chatroomId to the socket event
   //   },
   // });
-  const sendMessageTypingEvent = () => {
-    socket.emit("user-typing", { chatroomId, user: sessionData?.user }); // Send chatroomId to the socket event
+  const sendMessageTypingEvent = (message: string) => {
+    socket.emit("user-typing", {
+      chatroomId,
+      user: sessionData?.user,
+      message,
+    }); // Send chatroomId to the socket event
   };
 
   //is typing idicator
@@ -95,16 +99,18 @@ const Messages: React.FC = () => {
       ({
         chatroomId: userChatroomId,
         user,
+        message,
       }: {
         chatroomId: string;
         user: User;
+        message: string;
       }) => {
         // Only add user to usersTyping for the current chatroom
         if (
           userChatroomId === chatroomId &&
           user.id !== sessionData?.user?.id
         ) {
-          addUserTyping(user);
+          addUserTyping({ user, message });
         }
       }
     );
