@@ -76,7 +76,7 @@ export default function MessageInput({
             />
 
             <Flex>
-              <span className="font-bold">{user.name}</span> is typing...{" "}
+              <span className="mr-1 font-bold">{user.name}</span> is typing...{" "}
               {sessionData &&
                 sessionData.user.name?.toLowerCase().includes("tom") && (
                   <div className="px-1 italic">{message}</div>
