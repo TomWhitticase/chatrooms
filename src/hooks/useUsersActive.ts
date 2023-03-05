@@ -65,7 +65,7 @@ export default function useUsersActive({ socket }: IProps) {
     }, 5000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [usersLastSeen]);
 
   //if a user has joined then console log
   const [prevUsersActive, setPrevUsersActive] = useState<IUserLastSeen[]>([]);
