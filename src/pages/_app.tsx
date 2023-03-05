@@ -34,7 +34,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       ));
     });
     clearAlerts();
-  }, [alerts.length]);
+  }, [alerts, clearAlerts]);
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={session}>

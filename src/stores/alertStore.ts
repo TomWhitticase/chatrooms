@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { create } from "zustand";
 
 interface IAlert {
@@ -18,7 +18,7 @@ const useAlertStore = create<IAlertStore>((set) => ({
       alerts: [...state.alerts, alert],
     })),
   clearAlerts: () =>
-    set((state: IAlertStore) => ({
+    set(() => ({
       alerts: [],
     })),
 }));

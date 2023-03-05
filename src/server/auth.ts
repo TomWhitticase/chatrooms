@@ -8,6 +8,7 @@ import GithubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
+import type { User } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -17,11 +18,7 @@ import { prisma } from "~/server/db";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+    user: User;
   }
 
   // interface User {

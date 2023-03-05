@@ -3,8 +3,6 @@ import { Server } from "socket.io";
 import { NextApiRequest, NextApiResponse } from "next";
 import { User } from "@prisma/client";
 
-//socket
-
 const SocketHandler = (req: NextApiRequest, res: any) => {
   if (res.socket.server) {
     if (res.socket.server.io) {

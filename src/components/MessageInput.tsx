@@ -8,7 +8,7 @@ import ReactLoading from "react-loading";
 interface IProps {
   handleSendMessage: (message: string) => void;
   sendMessageTypingEvent: (message: string) => void;
-  usersTyping: { user: User; time: Date; message: string }[];
+  usersTyping: { user: User; time: Date }[];
 }
 export default function MessageInput({
   handleSendMessage,
@@ -62,7 +62,7 @@ export default function MessageInput({
         <Text color={"red"}>{errorText}</Text>
       </form>
       <div className="flex w-full flex-col gap-1">
-        {usersTyping.map(({ user, time, message }) => (
+        {usersTyping.map(({ user, time }) => (
           <div
             key={time.toString()}
             className={`flex w-full items-center justify-start p-[0.1rem]`}
@@ -77,10 +77,6 @@ export default function MessageInput({
 
             <Flex>
               <span className="mr-1 font-bold">{user.name}</span> is typing...{" "}
-              {sessionData &&
-                sessionData.user.name?.toLowerCase().includes("tom") && (
-                  <div className="px-1 italic">{message}</div>
-                )}
             </Flex>
           </div>
         ))}

@@ -15,12 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { FaUsers } from "react-icons/fa";
 
-interface IProps {
-  showUsers: boolean;
-  toggleShowUsers: () => void;
-}
-
-export const Header = ({ showUsers, toggleShowUsers }: IProps) => {
+export const Header = () => {
   const { data: sessionData } = useSession();
 
   return (
@@ -60,13 +55,6 @@ export const Header = ({ showUsers, toggleShowUsers }: IProps) => {
               </PopoverContent>
             </Popover>
           </div>
-          <Button
-            className="flex items-center justify-center"
-            colorScheme={showUsers ? "blue" : "gray"}
-            onClick={toggleShowUsers}
-          >
-            <FaUsers size={30} />
-          </Button>
         </div>
       ) : (
         <>

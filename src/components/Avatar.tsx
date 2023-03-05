@@ -1,5 +1,5 @@
 import React from "react";
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import Image from "next/image";
 import {
   Popover,
@@ -9,7 +9,6 @@ import {
   PopoverBody,
   PopoverArrow,
   PopoverCloseButton,
-  Button,
 } from "@chakra-ui/react";
 
 interface IProps {
