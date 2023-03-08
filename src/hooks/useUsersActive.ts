@@ -23,7 +23,7 @@ export default function useUsersActive({ socket }: IProps) {
     if (!socket) return;
     if (!session) return;
     socket.on("user-active", ({ user }: { user: User }) => {
-      if (user.id !== session.user.id) addUserActive(user);
+      void addUserActive(user);
     });
   }, [socket, session]);
 
@@ -75,7 +75,7 @@ export default function useUsersActive({ socket }: IProps) {
       const newUser = usersLastSeen.find((u) => {
         return !prevUsersActive.find((p) => p.user.id === u.user.id);
       });
-      if (newUser) {
+      if (newUser && newUser.user.id !== session?.user.id) {
         addAlert({ type: "user-joined", user: newUser.user });
       }
     }

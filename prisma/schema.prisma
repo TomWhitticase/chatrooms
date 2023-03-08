@@ -60,8 +60,6 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-
-
 model Chatroom {
   id           String    @id @default(cuid())
   name         String

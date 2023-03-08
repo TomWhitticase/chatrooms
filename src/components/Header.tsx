@@ -14,21 +14,39 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { FaUsers } from "react-icons/fa";
+import { TabList, Tab } from "@tremor/react";
+import { useRouter } from "next/router";
 
 export const Header = () => {
   const { data: sessionData } = useSession();
+  const router = useRouter();
 
   return (
     <Flex
+      position={"relative"}
       justifyContent={"space-between"}
       alignItems={"center"}
       h={"4rem"}
       px={2}
       borderBottom={"1px solid #e2e8f0"}
     >
-      <Heading size="lg" w={"full"} textAlign={"center"}>
-        Tom&apos;s Chatrooms
-      </Heading>
+      <div className="flex h-full items-center justify-center">
+        <Heading size="lg" textAlign={"start"}>
+          Tom&apos;s Chatrooms
+        </Heading>
+      </div>
+      <div className="absolute bottom-0 right-1/2 translate-x-1/2">
+        <TabList
+          defaultValue={router.asPath}
+          handleSelect={(value) => void router.push(value as string)}
+          marginTop="mt-6"
+        >
+          <Tab value={"/"} text="Home" />
+          <Tab value={"/chat"} text="Chat" />
+          <Tab value={"/users"} text="Users" />
+        </TabList>
+      </div>
+
       {sessionData?.user?.name ? (
         <div className="flex gap-4">
           <div className="flex items-center justify-center">

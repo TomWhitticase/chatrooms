@@ -10,7 +10,9 @@ import Layout from "~/components/Layout";
 import toast, { Toaster } from "react-hot-toast";
 import useAlertStore from "~/stores/alertStore";
 import { useEffect } from "react";
-import Avatar from "~/components/Avatar";
+import Avatar from "~/components/user/Avatar";
+import { UsersOnlineController } from "~/components/UsersOnlineController";
+import "@tremor/react/dist/esm/tremor.css";
 const queryClient = new QueryClient();
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -35,11 +37,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
     });
     clearAlerts();
   }, [alerts, clearAlerts]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={session}>
         <ChakraProvider>
           <Toaster position="top-left" reverseOrder={false} />
+          <UsersOnlineController />
           <Layout>
             <Component {...pageProps} />
           </Layout>

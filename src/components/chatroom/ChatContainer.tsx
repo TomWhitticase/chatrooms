@@ -7,7 +7,7 @@ import type { Socket } from "socket.io-client";
 import { useUsersTyping } from "~/hooks/useUsersTyping";
 import { api } from "~/utils/api";
 
-import Avatar from "./Avatar";
+import Avatar from "../user/Avatar";
 import MessageInput from "./MessageInput";
 
 interface IProps {
@@ -158,9 +158,36 @@ export function ChatContainer({ chatroom, socket }: IProps) {
                               } bg-slate-200 text-slate-800`
                         }`}
                       >
-                        {message.content}
-                        {/* if message is link to image, display image */}
+                        {/* //if message.content contains the url of an image then
+                        display the Image */}
                         {/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(
+                          message.content
+                        ) ? (
+                          <Image
+                            className="cursor-pointer"
+                            src={(() => {
+                              //message.content contains a url but also other text. get just the url
+
+                              function extractImageUrls(str: string): string[] {
+                                const regex =
+                                  /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))/gi; // Regular expression to match image URLs
+                                const matches = str.match(regex); // Find all matches in the string
+                                return matches || []; // Return array of matches or empty array if none found
+                              }
+                              return extractImageUrls(message.content)[0] || "";
+                            })()}
+                            alt={message.content}
+                            width={250}
+                            height={250}
+                            onClick={() => {
+                              window.open(message.content, "_blank");
+                            }}
+                          />
+                        ) : (
+                          message.content
+                        )}
+                        {/* if message is link to image, display image */}
+                        {/* {/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(
                           message.content
                         ) && (
                           <Image
@@ -173,7 +200,7 @@ export function ChatContainer({ chatroom, socket }: IProps) {
                               window.open(message.content, "_blank");
                             }}
                           />
-                        )}
+                        )} */}
                       </Box>
                     </div>
                   </div>

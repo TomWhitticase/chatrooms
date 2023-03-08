@@ -11,6 +11,7 @@ interface IAlertStore {
   clearAlerts: () => void;
 }
 
+
 const useAlertStore = create<IAlertStore>((set) => ({
   alerts: [],
   addAlert: (alert: IAlert) =>

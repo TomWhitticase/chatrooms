@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { chatroomRouter } from "./routers/chatrooms";
 import { messageRouter } from "./routers/messages";
+import { usersRouter } from "./routers/users";
 
 /**
  * This is the primary router for your server.
@@ -10,6 +11,7 @@ import { messageRouter } from "./routers/messages";
 export const appRouter = createTRPCRouter({
   chatroom: chatroomRouter,
   message: messageRouter,
+  users: usersRouter,
 });
 
 // export type definition of API
