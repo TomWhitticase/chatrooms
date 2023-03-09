@@ -11,12 +11,19 @@ interface IProps {
 export function ChatroomUsers({ members }: IProps) {
   const { data: sessionData } = useSession();
   const { usersOnline } = useUsersOnlineStore();
+  if (!members) return <></>;
 
   //display users online first, then users offline
   return (
     <div className="flex h-full w-full flex-col items-center justify-start gap-4 p-4">
       <Heading as="h1" size="md" className="mb-4">
-        Members - {usersOnline.length} online
+        Members -{" "}
+        {
+          usersOnline.filter((user) =>
+            members?.map((member) => member.id).includes(user.id)
+          ).length
+        }{" "}
+        online
       </Heading>
 
       {members?.map((member: User) => {
