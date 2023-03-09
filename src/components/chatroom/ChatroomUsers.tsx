@@ -1,3 +1,4 @@
+import { Heading } from "@chakra-ui/react";
 import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import useUsersOnlineStore from "~/stores/usersOnlineStore";
@@ -14,6 +15,10 @@ export function ChatroomUsers({ members }: IProps) {
   //display users online first, then users offline
   return (
     <div className="flex h-full w-full flex-col items-center justify-start gap-4 p-4">
+      <Heading as="h1" size="md" className="mb-4">
+        Members - {usersOnline.length} online
+      </Heading>
+
       {members?.map((member: User) => {
         if (!usersOnline.find((user) => user.id === member.id)) return;
         return (

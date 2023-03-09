@@ -44,7 +44,7 @@ export function ChatroomList({
           className="flex flex-col gap-4 text-center"
           onClick={() => void router.push("/browse")}
         >
-          You haven&apost joined any chatrooms
+          You haven&apos;t joined any chatrooms
           <Button>Browse rooms</Button>
         </div>
       )}
