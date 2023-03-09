@@ -2,6 +2,7 @@ import { Heading } from "@chakra-ui/react";
 import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { LoadingScreen } from "~/components/LoadingScreen";
 import Avatar from "~/components/user/Avatar";
 import useUsersOnlineStore from "~/stores/usersOnlineStore";
 import { api } from "~/utils/api";
@@ -11,7 +12,7 @@ export default function Users() {
   const { usersOnline } = useUsersOnlineStore();
   const { data: session } = useSession();
   const [usersNotOnline, setUsersNotOnline] = useState<User[]>([]);
-  const { data: users } = api.users.getAll.useQuery(undefined, {
+  const { data: users, status } = api.users.getAll.useQuery(undefined, {
     enabled: session?.user !== undefined,
   });
 
@@ -24,7 +25,9 @@ export default function Users() {
       //set uses not online to users that are not online
       setUsersNotOnline(usersNotOnline);
     }
-  }, [usersOnline]);
+  }, [usersOnline, users]);
+
+  if (status === "loading") return <LoadingScreen />;
 
   return (
     <div className="p-4">

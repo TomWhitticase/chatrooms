@@ -49,7 +49,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    // chatrooms     Chatroom[]       @relation("ChatroomMembers")
+   chatrooms     Chatroom[]       @relation("ChatroomMembers")
     messages      Message[]        @relation("UserMessages")
 }
 
@@ -65,7 +65,7 @@ model Chatroom {
   name         String
   creatorId    String
   createdAt    DateTime  @default(now())
-//   members      User[]    @relation("ChatroomMembers")
+  members      User[]    @relation("ChatroomMembers")
   messages     Message[] @relation("ChatroomMessages")
 }
 

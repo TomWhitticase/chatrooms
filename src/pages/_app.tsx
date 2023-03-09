@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import Avatar from "~/components/user/Avatar";
 import { UsersOnlineController } from "~/components/UsersOnlineController";
 import "@tremor/react/dist/esm/tremor.css";
+
 const queryClient = new QueryClient();
 
 const MyApp: AppType<{ session: Session | null }> = ({

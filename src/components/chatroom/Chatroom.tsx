@@ -1,26 +1,30 @@
-import type { Chatroom } from "@prisma/client";
+import type { Chatroom, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import type { Socket } from "socket.io-client";
 import { ChatContainer } from "~/components/chatroom/ChatContainer";
-import useUsersActive from "~/hooks/useUsersActive";
 import { api } from "~/utils/api";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { AiOutlineMenu } from "react-icons/ai";
 import router from "next/router";
 import { ChatroomList } from "./ChatroomList";
+import { LoadingScreen } from "../LoadingScreen";
+import { ChatroomUsers } from "./ChatroomUsers";
 let socket: Socket;
 
 export function Chatroom() {
-  const { data: session, status } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
 
-  const { data: chatrooms } = api.chatroom.getAll.useQuery(undefined, {
-    enabled: session?.user !== undefined,
-  });
+  const { data: chatrooms, status: chatroomsStatus } =
+    api.chatroom.getMemberOf.useQuery(undefined, {
+      enabled: session?.user !== undefined,
+    });
 
   const [selectedChatroom, setSelectedChatroom] = useState<
-    Chatroom | undefined
+    Chatroom & {
+      members: User[];
+    }
   >();
 
   useEffect(() => {
@@ -45,15 +49,14 @@ export function Chatroom() {
 
   const [chatroomListOpen, setChatroomListOpen] = useState(true);
 
-  if (status === "loading") {
-    return <p>Loading...</p>;
+  if (chatroomsStatus === "loading") {
+    return <LoadingScreen />;
   }
 
-  if (status === "unauthenticated") {
-    //redirect to index page
+  if (sessionStatus === "unauthenticated") {
+    //redirect to index page if not authenticated
     void router.push("/");
-
-    return <p>You must be signed in</p>;
+    return <LoadingScreen />;
   }
 
   return (
@@ -90,6 +93,9 @@ export function Chatroom() {
             select a chatroom
           </div>
         )}
+      </div>
+      <div className="flex flex-col items-start justify-center">
+        <ChatroomUsers members={selectedChatroom?.members} />
       </div>
     </div>
   );

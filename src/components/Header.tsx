@@ -16,10 +16,12 @@ import {
 import { FaUsers } from "react-icons/fa";
 import { TabList, Tab } from "@tremor/react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export const Header = () => {
   const { data: sessionData } = useSession();
   const router = useRouter();
+  const [currentPath, setCurrentPath] = useState(router.pathname);
 
   return (
     <Flex
@@ -37,12 +39,13 @@ export const Header = () => {
       </div>
       <div className="absolute bottom-0 right-1/2 translate-x-1/2">
         <TabList
-          defaultValue={router.asPath}
+          value={router.pathname}
           handleSelect={(value) => void router.push(value as string)}
           marginTop="mt-6"
         >
           <Tab value={"/"} text="Home" />
           <Tab value={"/chat"} text="Chat" />
+          <Tab value={"/browse"} text="browse" />
           <Tab value={"/users"} text="Users" />
         </TabList>
       </div>

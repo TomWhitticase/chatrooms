@@ -10,7 +10,20 @@ export const chatroomRouter = createTRPCRouter({
     }),
 
   getAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.chatroom.findMany();
+    return ctx.prisma.chatroom.findMany({ include: { members: true } });
+  }),
+  //get chatrooms that the user is a member of
+  getMemberOf: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.chatroom.findMany({
+      where: {
+        members: {
+          some: {
+            id: ctx.session.user.id,
+          },
+        },
+      },
+      include: { members: true },
+    });
   }),
   create: protectedProcedure
     .input(z.object({ name: z.string() }))
@@ -28,6 +41,38 @@ export const chatroomRouter = createTRPCRouter({
       return ctx.prisma.chatroom.delete({
         where: {
           id: input.id,
+        },
+      });
+    }),
+  join: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.chatroom.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          members: {
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
+        },
+      });
+    }),
+  leave: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.chatroom.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          members: {
+            disconnect: {
+              id: ctx.session.user.id,
+            },
+          },
         },
       });
     }),
